@@ -1,0 +1,16 @@
+let canvas;
+let character = new Image();
+let ctx;
+
+
+
+function init(){
+    canvas = document.getElementById('canvas');
+    ctx = canvas.getContext('2d');
+
+    character.src = '../img_pollo_loco/2_character_pepe/2_walk/W-21.png';
+    setTimeout(function(){
+        ctx.drawImage(character, 20, 20, 50, 150);
+
+    }, 2000);    
+}
