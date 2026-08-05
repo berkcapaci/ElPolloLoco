@@ -1,0 +1,142 @@
+/* =========================
+   GAME CONTAINER
+========================= */
+
+.game-container {
+    position: relative;
+
+    width: 720px;
+    height: 480px;
+    display: flex;
+    flex-direction: column;
+
+}
+
+canvas {
+  background-color: black;
+}
+
+.start-screen {
+  width: 720px;
+  height: 480px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 24px;
+  background: rgba(0, 0, 0, 0.35);
+  border-radius: 16px;
+  backdrop-filter: blur(4px);
+}
+
+.start-screen h1 {
+  margin: 0;
+  font-family: "Rye", serif;
+  font-size: 64px;
+  color: #f6c453;
+  text-shadow:
+    -2px -2px 0 #5b2f0d,
+    2px -2px 0 #5b2f0d,
+    -2px 2px 0 #5b2f0d,
+    2px 2px 0 #5b2f0d,
+    0 6px 12px rgba(0, 0, 0, 0.6);
+  font-size: 72px;
+  letter-spacing: 3px;
+  animation: floatLogo 3s ease-in-out infinite;
+}
+
+@keyframes floatLogo{
+
+    0%{
+        transform: translateY(0);
+    }
+
+    50%{
+        transform: translateY(-8px);
+    }
+
+    100%{
+        transform: translateY(0);
+    }
+
+}
+
+/* =========================
+   PLAY BUTTON
+========================= */
+
+#play-button {
+  padding: 14px 42px;
+  font-family: "Rye";
+  font-size: 28px;
+  color: white;
+  background: #b64618;
+  border: 3px solid #5b2f0d;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 150ms ease;
+}
+
+#play-button:hover {
+  background: #d55b28;
+  transform: scale(1.05);
+}
+
+#play-button:active {
+  transform: scale(0.98);
+}
+
+/* =========================
+   CONTROLS
+========================= */
+
+.controls {
+  color: white;
+  text-align: center;
+  text-shadow: 2px 2px 5px black;
+}
+
+.controls h2 {
+   margin-bottom: 20px;
+   letter-spacing: 1px;
+}
+
+.controls-grid {
+    display: grid;
+    grid-template-columns: 120px auto;
+    gap: 16px 20px;
+    align-items: center;
+}
+
+.key {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    width: 48px;
+    height: 42px;
+
+    background: linear-gradient(to bottom, #fdfdfd, #d9d9d9);
+
+    color: #333;
+
+    border: 2px solid #888;
+    border-radius: 8px;
+
+    font-family: Arial, sans-serif;
+    font-size: 18px;
+    font-weight: bold;
+
+    box-shadow:
+        0 3px 0 #666,
+        0 6px 10px rgba(0,0,0,.35);
+}
+
+.key-group {
+    display: flex;
+    gap: 8px;
+}
+
+.key-space {
+    width: 120px;
+}
