@@ -1,9 +1,15 @@
+/**
+ * Creates coins arranged in a half-circle.
+ *
+ * @param {number} startX
+ * @param {number} groundY
+ * @param {number} width
+ * @param {number} height
+ * @param {number} itemAmount
+ * @returns {Coin[]}
+ */
  function createCoinArc(startX, groundY, width, height, itemAmount) {
-  // Starting value X = 200
-  //  Ground = 300
-  //  Arc width = 250 px
-  //  Arc height = 100 px
-  //  11 coins
+ 
     let coins = [];
     for (let i = 0; i < itemAmount; i++) {
       let x = startX + (width / (itemAmount- 1)) * i;

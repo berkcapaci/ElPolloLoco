@@ -16,6 +16,8 @@ class World {
   coinCounter = new CoinCounter();
   bottleCounter = new BottleCounter();
 
+  canThrowBottle = true;
+
   constructor(canvas, keyboard) {
     this.ctx = canvas.getContext("2d");
     this.canvas = canvas;
@@ -33,8 +35,11 @@ class World {
     setInterval(() => {
       this.checkCollisions();
       this.checkCoinCollisions();
-      this.checkBottleCollisions();
+      this.checkBottleCollection();
+      this.checkBottleCollision();
       this.checkThrowObjects();
+      this.removeMarkedThrowableObjects();
+      this.removeDeadChickens();
     }, 200);
   }
 
@@ -61,7 +66,7 @@ class World {
     }
   }
 
-  checkBottleCollisions(){
+  checkBottleCollection() {
     let availableBottles = this.level.bottles;
 
     let collectedBottleIndex = availableBottles.findIndex((currentBottle) => {
@@ -74,13 +79,49 @@ class World {
     }
   }
 
+ checkBottleCollision() {
+    console.log("bottles:", this.throwableObjects.length);
+
+    this.throwableObjects.forEach((bottle) => {
+        console.log(
+            "broken:",
+            bottle.isBroken,
+            "marked:",
+            bottle.markedForDeletion,
+            "x:",
+            bottle.x,
+            "y:",
+            bottle.y
+        );
+
+      this.level.enemies.forEach((enemy) => {
+            if (bottle.isColliding(enemy)) {
+                console.log("BOTTLE HIT CHICKEN");
+
+                bottle.breakBottle();
+                enemy.hit();
+            }
+        });
+    });
+}
+
   checkThrowObjects() {
-    if (this.keyboard.D && this.character.collectedBottles > 0) {
+    if (
+      this.keyboard.D &&
+      this.character.collectedBottles > 0 &&
+      this.canThrowBottle
+    ) {
       let bottle = new ThrowableObject(
         this.character.x + 100,
         this.character.y + 100,
       );
       this.throwableObjects.push(bottle);
+      this.character.collectedBottles--;
+      this.bottleCounter.currentBottleAmount = this.character.collectedBottles;
+      this.canThrowBottle = false;
+      setTimeout(() => {
+        this.canThrowBottle = true;
+      }, 600);
     }
   }
 
@@ -97,12 +138,12 @@ class World {
     this.addObjectToMap(this.level.bottles);
 
     // This allows Pepe to walk past the bottle.
-    this.addToMap(this.character);    
+    this.addToMap(this.character);
 
     this.ctx.translate(-this.camera_x, 0);
 
-   // HUD elements (Heads-up display) are drawn last so they always appear in front of the game world.
-    this.addToMap(this.statusBar);       
+    // HUD elements (Heads-up display) are drawn last so they always appear in front of the game world.
+    this.addToMap(this.statusBar);
     this.addToMap(this.coinCounter);
     this.addToMap(this.bottleCounter);
     //this.addToMap(this.bottleCounter);   //coming soon.
@@ -142,5 +183,23 @@ class World {
   flipImageBack(mo) {
     mo.x = mo.x * -1;
     this.ctx.restore();
+  }
+
+  removeMarkedThrowableObjects() {
+    this.throwableObjects = this.throwableObjects.filter(
+      (throwableObject) => !throwableObject.markedForDeletion,
+    );
+  }
+
+  removeDeadChickens(){
+    const currentTime = new Date().getTime();
+    this.level.enemies = this.level.enemies.filter(
+      (enemy) => {
+        if (!enemy.isChickenDead){
+          return true;
+        }
+        return currentTime - enemy.deathTime < 500;
+      }
+    );
   }
 }

@@ -16,12 +16,8 @@ class MovableObject extends DrawableObject {
   }
 
   isAboveGround() {
-    if(this instanceof ThrowableObject){  //throwable object should always fall
-      return true;
-    } else {
-    return this.y < 225;
+      return this.y < 225;
     }
-  }
 
   //character.isColliding(chicken);
 
