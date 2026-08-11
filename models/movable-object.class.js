@@ -8,6 +8,10 @@ class MovableObject extends DrawableObject {
 
   applyGravity() {
     setInterval(() => {
+      if (this.isDead && this.isDead()) {
+        return;
+      }
+
       if (this.isAboveGround() || this.speedY > 0) {
         this.y -= this.speedY;
         this.speedY -= this.acceleration;
@@ -16,8 +20,8 @@ class MovableObject extends DrawableObject {
   }
 
   isAboveGround() {
-      return this.y < 225;
-    }
+    return this.y < 225;
+  }
 
   //character.isColliding(chicken);
 
@@ -32,7 +36,7 @@ class MovableObject extends DrawableObject {
 
   hit() {
     this.energy -= 5;
-    if (this.energy < 0) {
+    if (this.energy <= 0) {
       this.energy = 0;
     } else {
       this.lastHit = new Date().getTime();

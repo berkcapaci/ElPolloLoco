@@ -8,123 +8,192 @@
  * @param {number} itemAmount
  * @returns {Coin[]}
  */
- function createCoinArc(startX, groundY, width, height, itemAmount) {
- 
-    let coins = [];
-    for (let i = 0; i < itemAmount; i++) {
-      let x = startX + (width / (itemAmount- 1)) * i;
-      let angle = (Math.PI * i) / (itemAmount - 1);
-      let y = groundY - Math.sin(angle) * height;
+function createCoinArc(startX, groundY, width, height, itemAmount) {
+  let coins = [];
+  for (let i = 0; i < itemAmount; i++) {
+    let x = startX + (width / (itemAmount - 1)) * i;
+    let angle = (Math.PI * i) / (itemAmount - 1);
+    let y = groundY - Math.sin(angle) * height;
 
-      coins.push(new Coin(x, y));
-    }
-    return coins;
+    coins.push(new Coin(x, y));
+  }
+  return coins;
+}
+
+function createBottleLine(startX, y, itemAmount, distance) {
+  let bottles = [];
+
+  for (let i = 0; i < itemAmount; i++) {
+    let x = startX + i * distance;
+
+    bottles.push(new Bottle(x, y));
   }
 
-  function createBottleLine(startX, y, itemAmount, distance) {
-    let bottles = [];
+  return bottles;
+}
 
-    for (let i = 0; i < itemAmount; i++) {
-
-        let x = startX + i * distance;
-
-        bottles.push(new Bottle(x, y));
-    }
-
-    return bottles;
+function createRandomChickens(itemAmount, minX, maxX) {
+  let chickens = [];
+  for (let i = 0; i < itemAmount; i++) {
+    let x = minX + Math.random() * (maxX - minX);
+    chickens.push(new Chicken(x));
   }
+  return chickens;
+}
 
-  function createRandomChickens(itemAmount, minX, maxX){
-    let chickens = [];
-    for (let i = 0; i < itemAmount; i++) {
-      let x = minX + Math.random() * (maxX - minX);
-      chickens.push(new Chicken(x));
-    }
-    return chickens;
-  }
+const clouds = [
+  new Cloud(0),
+  new Cloud(700),
+  new Cloud(1450),
+  new Cloud(2200),
+  new Cloud(2900),
+  new Cloud(3650),
+  new Cloud(4400),
+];
 
-const level1 = new Level(
- 
-  [
-    ...createRandomChickens(12, 300, 2100),
-    new Endboss()
-  ],
-  [new Cloud()],
-  [
-    new BackgroundObject("img/5_background/layers/air.png", -719),
-    new BackgroundObject("img/5_background/layers/3_third_layer/2.png", -719),
-    new BackgroundObject("img/5_background/layers/2_second_layer/2.png", -719),
-    new BackgroundObject("img/5_background/layers/1_first_layer/2.png", -719),
+function createLevel1() {
+  const clouds = [
+    new Cloud(0),
+    new Cloud(700),
+    new Cloud(1450),
+    new Cloud(2200),
+    new Cloud(2900),
+    new Cloud(3650),
+    new Cloud(4400),
+  ];
 
-    new BackgroundObject("img/5_background/layers/air.png", 0),
-    new BackgroundObject("img/5_background/layers/3_third_layer/1.png", 0),
-    new BackgroundObject("img/5_background/layers/2_second_layer/1.png", 0),
-    new BackgroundObject("img/5_background/layers/1_first_layer/1.png", 0),
+  return new Level(
+    [...createRandomChickens(20, 300, 4000), new Endboss()],
 
-    new BackgroundObject("img/5_background/layers/air.png", 719),
-    new BackgroundObject("img/5_background/layers/3_third_layer/2.png", 719),
-    new BackgroundObject("img/5_background/layers/2_second_layer/2.png", 719),
-    new BackgroundObject("img/5_background/layers/1_first_layer/2.png", 719),
+    clouds,
 
-    new BackgroundObject("img/5_background/layers/air.png", 719 * 2),
-    new BackgroundObject(
-      "img/5_background/layers/3_third_layer/1.png",
-      719 * 2,
-    ),
-    new BackgroundObject(
-      "img/5_background/layers/2_second_layer/1.png",
-      719 * 2,
-    ),
-    new BackgroundObject(
-      "img/5_background/layers/1_first_layer/1.png",
-      719 * 2,
-    ),
+    [
+      new BackgroundObject("img/5_background/layers/air.png", -719),
+      new BackgroundObject("img/5_background/layers/3_third_layer/2.png", -719),
+      new BackgroundObject(
+        "img/5_background/layers/2_second_layer/2.png",
+        -719,
+      ),
+      new BackgroundObject("img/5_background/layers/1_first_layer/2.png", -719),
 
-    new BackgroundObject("img/5_background/layers/air.png", 719 * 3),
-    new BackgroundObject(
-      "img/5_background/layers/3_third_layer/2.png",
-      719 * 3,
-    ),
-    new BackgroundObject(
-      "img/5_background/layers/2_second_layer/2.png",
-      719 * 3,
-    ),
-    new BackgroundObject(
-      "img/5_background/layers/1_first_layer/2.png",
-      719 * 3,
-    ),
-  ],
+      new BackgroundObject("img/5_background/layers/air.png", 0),
+      new BackgroundObject("img/5_background/layers/3_third_layer/1.png", 0),
+      new BackgroundObject("img/5_background/layers/2_second_layer/1.png", 0),
+      new BackgroundObject("img/5_background/layers/1_first_layer/1.png", 0),
 
-  [
-    ...createCoinArc(100, 200, 350, 100, 11),
-    ...createCoinArc(800, 200, 350, 100, 11),
-    ...createCoinArc(1500, 200, 350, 100, 11),
-    new Coin(350, 300),
-    new Coin(450, 300),
-    new Coin(550, 300),
-    new Coin(600, 300),
-    new Coin(1250, 300),
-    new Coin(1450, 300),
-    new Coin(1750, 300)
-    
-  ],
+      new BackgroundObject("img/5_background/layers/air.png", 719),
+      new BackgroundObject("img/5_background/layers/3_third_layer/2.png", 719),
+      new BackgroundObject("img/5_background/layers/2_second_layer/2.png", 719),
+      new BackgroundObject("img/5_background/layers/1_first_layer/2.png", 719),
 
-  [
-    ...createBottleLine(100, 360, 25, 50),
-    new Bottle(1200, 360),
-    new Bottle(1250, 360),
-    new Bottle(1300, 360),
-    new Bottle(1350, 360),
-    new Bottle(1400, 360),
-    new Bottle(1450, 360),
-    new Bottle(1500, 360),
-    new Bottle(1550, 360),
-    new Bottle(1600, 360),
-    new Bottle(1650, 360),
-    new Bottle(1700, 360),
-    new Bottle(1750, 360),
-    new Bottle(1800, 360),
-    new Bottle(1850, 360),
-    new Bottle(1900, 360)
-  ],
-);
+      new BackgroundObject("img/5_background/layers/air.png", 719 * 2),
+      new BackgroundObject(
+        "img/5_background/layers/3_third_layer/1.png",
+        719 * 2,
+      ),
+      new BackgroundObject(
+        "img/5_background/layers/2_second_layer/1.png",
+        719 * 2,
+      ),
+      new BackgroundObject(
+        "img/5_background/layers/1_first_layer/1.png",
+        719 * 2,
+      ),
+
+      new BackgroundObject("img/5_background/layers/air.png", 719 * 3),
+      new BackgroundObject(
+        "img/5_background/layers/3_third_layer/2.png",
+        719 * 3,
+      ),
+      new BackgroundObject(
+        "img/5_background/layers/2_second_layer/2.png",
+        719 * 3,
+      ),
+      new BackgroundObject(
+        "img/5_background/layers/1_first_layer/2.png",
+        719 * 3,
+      ),
+
+      new BackgroundObject("img/5_background/layers/air.png", 719 * 4),
+      new BackgroundObject(
+        "img/5_background/layers/3_third_layer/1.png",
+        719 * 4,
+      ),
+      new BackgroundObject(
+        "img/5_background/layers/2_second_layer/1.png",
+        719 * 4,
+      ),
+      new BackgroundObject(
+        "img/5_background/layers/1_first_layer/1.png",
+        719 * 4,
+      ),
+
+      new BackgroundObject("img/5_background/layers/air.png", 719 * 5),
+      new BackgroundObject(
+        "img/5_background/layers/3_third_layer/2.png",
+        719 * 5,
+      ),
+      new BackgroundObject(
+        "img/5_background/layers/2_second_layer/2.png",
+        719 * 5,
+      ),
+      new BackgroundObject(
+        "img/5_background/layers/1_first_layer/2.png",
+        719 * 5,
+      ),
+
+      new BackgroundObject("img/5_background/layers/air.png", 719 * 6),
+      new BackgroundObject(
+        "img/5_background/layers/3_third_layer/1.png",
+        719 * 6,
+      ),
+      new BackgroundObject(
+        "img/5_background/layers/2_second_layer/1.png",
+        719 * 6,
+      ),
+      new BackgroundObject(
+        "img/5_background/layers/1_first_layer/1.png",
+        719 * 6,
+      ),
+
+      new BackgroundObject("img/5_background/layers/air.png", 719 * 7),
+      new BackgroundObject(
+        "img/5_background/layers/3_third_layer/2.png",
+        719 * 7,
+      ),
+      new BackgroundObject(
+        "img/5_background/layers/2_second_layer/2.png",
+        719 * 7,
+      ),
+      new BackgroundObject(
+        "img/5_background/layers/1_first_layer/2.png",
+        719 * 7,
+      ),
+
+      new BackgroundObject("img/5_background/layers/air.png", 719 * 8),
+    ],
+
+    [
+      ...createCoinArc(400, 200, 350, 100, 12),
+      ...createCoinArc(1800, 200, 350, 100, 12),
+      ...createCoinArc(3200, 200, 350, 100, 12),
+
+      new Coin(4050, 300),
+      new Coin(4100, 300),
+      new Coin(4150, 300),
+      new Coin(4200, 300),
+      new Coin(4250, 300),
+      new Coin(4300, 300),
+      new Coin(4350, 300),
+      new Coin(4400, 300),
+      new Coin(4450, 300),
+    ],
+
+    [
+      ...createBottleLine(400, 360, 9, 50),
+      ...createBottleLine(1800, 360, 9, 50),
+      ...createBottleLine(3200, 360, 9, 50),
+      ...createBottleLine(4050, 360, 9, 50),
+    ],
+  );
+}
