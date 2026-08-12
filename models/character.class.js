@@ -3,11 +3,14 @@ class Character extends MovableObject {
   y = 120;
   speed = 10;
   otherDirection = false;
-
   deathImageIndex = 0;
   deathAnimationFinished = false;
   deathX = 0;
   deathY = 0;
+  world;
+  collectedCoins = 0;
+  collectedBottles = 0;
+  isFrozen = false;
 
   IMAGES_WALKING = [
     "img/2_character_pepe/2_walk/W-21.png",
@@ -36,7 +39,7 @@ class Character extends MovableObject {
     "img/2_character_pepe/5_dead/D-53.png",
     "img/2_character_pepe/5_dead/D-54.png",
     "img/2_character_pepe/5_dead/D-55.png",
-    "img/2_character_pepe/5_dead/D-56.png"
+    "img/2_character_pepe/5_dead/D-56.png",
   ];
 
   IMAGES_HURT = [
@@ -44,10 +47,6 @@ class Character extends MovableObject {
     "img/2_character_pepe/4_hurt/H-42.png",
     "img/2_character_pepe/4_hurt/H-43.png",
   ];
-
-  world;
-  collectedCoins = 0;
-  collectedBottles = 0;
 
   constructor() {
     super().loadImage("img/2_character_pepe/2_walk/W-21.png");
@@ -63,6 +62,9 @@ class Character extends MovableObject {
   animate() {
     setInterval(() => {
       if (this.isDead()) {
+        return;
+      }
+      if (this.isFrozen) {
         return;
       }
 
@@ -97,7 +99,9 @@ class Character extends MovableObject {
 
         return;
       }
-
+      if (this.isFrozen) {
+        return;
+      }
       if (this.isHurt()) {
         this.playAnimation(this.IMAGES_HURT);
       } else if (this.isAboveGround()) {
@@ -129,6 +133,20 @@ class Character extends MovableObject {
   die() {
     this.deathX = this.x;
     this.deathY = this.y;
+  }
+
+  moveLeft() {
+    if (this.isFrozen) {
+      return;
+    }
+    super.moveLeft();
+  }
+
+  moveRight() {
+    if (this.isFrozen) {
+      return;
+    }
+    super.moveRight();
   }
 
   jump() {

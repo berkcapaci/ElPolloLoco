@@ -36,6 +36,21 @@ function restartGame() {
   init();
 }
 
+function showMenu() {
+  if (world) {
+    world.stop();
+  }
+
+  keyboard = new Keyboard();
+
+  document.querySelector(".win-screen").classList.add("d-none");
+  document.querySelector(".lose-screen").classList.add("d-none");
+
+  document.getElementById("canvas").style.display = "none";
+
+  document.querySelector(".start-screen").classList.remove("d-none");
+}
+
 window.addEventListener("keydown", (e) => {
   if (e.keyCode == 39) {
     keyboard.RIGHT = true;

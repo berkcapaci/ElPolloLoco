@@ -92,8 +92,6 @@ class World {
         }
         this.character.hit();
         this.statusBar.setPercentage(this.character.energy);
-        if (enemy instanceof Endboss) {
-        }
       }
     });
   }
@@ -163,6 +161,9 @@ class World {
   }
 
   checkThrowObjects() {
+    if (this.character.isFrozen) {
+      return;
+    }
     if (
       this.keyboard.D &&
       this.character.collectedBottles > 0 &&
@@ -297,14 +298,11 @@ class World {
       return;
     }
 
-    if (endboss.isEndbossDead) {
+    if (endboss.isEndbossDead && endboss.deathAnimationFinished) {
       this.gameWon = true;
+      this.character.isFrozen = true;
 
-      this.winScreenTimeout = setTimeout(() => {
-        if (!this.isStopped) {
-          this.showWinScreen();
-        }
-      }, 2000);
+      this.showWinScreen();
     }
   }
 
@@ -322,8 +320,18 @@ class World {
     if (this.gameLost) {
       return;
     }
+
     if (this.character.isDead()) {
       this.gameLost = true;
+
+      const endboss = this.level.enemies.find(
+        (enemy) => enemy instanceof Endboss,
+      );
+
+      if (endboss) {
+        endboss.isFrozen = true;
+      }
+
       this.loseScreenTimeout = setTimeout(() => {
         if (!this.isStopped) {
           this.showLoseScreen();

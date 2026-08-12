@@ -4,6 +4,7 @@ class Endboss extends MovableObject {
   y = 100;
   energy = 100;
   isEndbossDead = false;
+  deathAnimationFinished = false;
   currentState = "WALK";
   alertDistance = 800;
   attackDistance = 250;
@@ -14,6 +15,7 @@ class Endboss extends MovableObject {
   attackCooldown = false;
   attackHit = false;
   attackHitFrame = 4;
+  isFrozen = false;
 
   IMAGES_WALKING = [
     "img/4_enemie_boss_chicken/1_walk/G1.png",
@@ -95,7 +97,16 @@ class Endboss extends MovableObject {
   animate() {
     setInterval(() => {
       if (this.isEndbossDead) {
-        this.playAnimation(this.IMAGES_DEAD);
+        if (!this.deathAnimationFinished) {
+          this.playAnimation(this.IMAGES_DEAD);
+          if (this.currentImage >= this.IMAGES_DEAD.length) {
+            this.currentImage = this.IMAGES_DEAD.length - 1;
+            this.deathAnimationFinished = true;
+          }
+        }
+        return;
+      }
+      if (this.isFrozen) {
         return;
       }
 
@@ -117,7 +128,7 @@ class Endboss extends MovableObject {
     }, 200);
 
     setInterval(() => {
-      if (!this.world || this.isEndbossDead) {
+      if (!this.world || this.isEndbossDead || this.isFrozen) {
         return;
       }
 
@@ -208,7 +219,14 @@ class Endboss extends MovableObject {
 
     const character = this.world.character;
 
-    if (this.isColliding(character)) {
+    const attackDistance = 180;
+
+    const bossLeft = this.x;
+    const characterRight = character.x + character.width;
+
+    const distance = bossLeft - characterRight;
+
+    if (distance <= attackDistance && distance >= -character.width) {
       character.hit();
       this.world.statusBar.setPercentage(character.energy);
 
