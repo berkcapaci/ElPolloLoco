@@ -1,44 +1,60 @@
-class EndbossBar {
+class EndbossBar extends DrawableObject {
   x = 430;
   y = 20;
-
-  iconWidth = 40;
-  iconHeight = 40;
+  width = 200;
+  height = 50;
 
   maxEnergy = 100;
   currentEnergy = 100;
-  heartAmount = 10;
 
-  img = new Image();
+  IMAGES = [
+    "img/7_statusbars/2_statusbar_endboss/orange/orange0.png",
+    "img/7_statusbars/2_statusbar_endboss/orange/orange20.png",
+    "img/7_statusbars/2_statusbar_endboss/orange/orange40.png",
+    "img/7_statusbars/2_statusbar_endboss/orange/orange60.png",
+    "img/7_statusbars/2_statusbar_endboss/orange/orange80.png",
+    "img/7_statusbars/2_statusbar_endboss/orange/orange100.png",
+  ];
 
   constructor() {
-    this.img.src = "img/7_statusbars/3_icons/icon_health_endboss.png";
+    super();
+
+    this.loadImages(this.IMAGES);
+    this.setEnergy(100);
   }
 
-draw(ctx) {
-        ctx.drawImage(
-            this.img,
-            this.x,
-            this.y,
-            this.iconWidth,
-            this.iconHeight
-        );
+  setEnergy(energy) {
+    this.currentEnergy = energy;
 
-        for (let i = 0; i < this.heartAmount; i++) {
-            let heartX = this.x + 50 + i * 24;
+    let path = this.IMAGES[this.resolveImageIndex()];
+    this.img = this.imageCache[path];
+  }
 
-            ctx.font = "24px Arial";
-
-            ctx.fillStyle =
-                i < this.currentEnergy / 10
-                    ? "red"
-                    : "gray";
-
-            ctx.fillText("♥", heartX, this.y + 30);
-        }
+  resolveImageIndex() {
+    if (this.currentEnergy >= 100) {
+      return 5;
     }
 
-    setEnergy(energy) {
-        this.currentEnergy = energy;
+    if (this.currentEnergy >= 80) {
+      return 4;
     }
+
+    if (this.currentEnergy >= 60) {
+      return 3;
+    }
+
+    if (this.currentEnergy >= 40) {
+      return 2;
+    }
+
+    if (this.currentEnergy >= 20) {
+      return 1;
+    }
+
+    return 0;
+  }
+
+  draw(ctx) {
+    ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
+  }
 }

@@ -107,6 +107,10 @@ LOSE SCREEN
   justify-content: center;
   align-items: center;
 
+  background-image: url("../img/YouWonYouLost/GameOver.png");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
   gap: 24px;
 
   background: rgba(0, 0, 0, 0.7);

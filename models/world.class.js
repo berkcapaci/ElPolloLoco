@@ -21,6 +21,7 @@ class World {
   animationFrameId;
   throwCooldownTimeout;
   loseScreenTimeout;
+  winScreenTimeout;
   isStopped = false;
   constructor(canvas, keyboard) {
     this.canvas = canvas;
@@ -43,6 +44,11 @@ class World {
 
   setWorld() {
     this.character.world = this;
+    this.level.enemies.forEach((enemy) => {
+      if (enemy instanceof Endboss) {
+        enemy.world = this;
+      }
+    });
   }
 
   run() {
@@ -64,10 +70,12 @@ class World {
 
   stop() {
     this.isStopped = true;
+
     clearInterval(this.gameInterval);
     cancelAnimationFrame(this.animationFrameId);
     clearTimeout(this.throwCooldownTimeout);
     clearTimeout(this.loseScreenTimeout);
+    clearTimeout(this.winScreenTimeout);
   }
 
   checkCollisions() {
@@ -190,10 +198,12 @@ class World {
     const endboss = this.level.enemies.find(
       (enemy) => enemy instanceof Endboss,
     );
+
     if (!endboss) {
       return false;
     }
-    return this.character.x + this.character.width > endboss.x;
+
+    return this.character.x + this.character.width >= endboss.x - 20;
   }
 
   draw() {
@@ -282,12 +292,19 @@ class World {
     const endboss = this.level.enemies.find(
       (enemy) => enemy instanceof Endboss,
     );
+
     if (!endboss || this.gameWon) {
       return;
     }
+
     if (endboss.isEndbossDead) {
       this.gameWon = true;
-      this.showWinScreen();
+
+      this.winScreenTimeout = setTimeout(() => {
+        if (!this.isStopped) {
+          this.showWinScreen();
+        }
+      }, 2000);
     }
   }
 

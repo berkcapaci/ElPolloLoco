@@ -2,10 +2,18 @@ class Endboss extends MovableObject {
   height = 350;
   width = 350;
   y = 100;
-
   energy = 100;
   isEndbossDead = false;
   currentState = "WALK";
+  alertDistance = 800;
+  attackDistance = 250;
+  startX = 5050;
+  returnDistance = 900;
+  bossSpeed = 2;
+  alertFinished = false;
+  attackCooldown = false;
+  attackHit = false;
+  attackHitFrame = 4;
 
   IMAGES_WALKING = [
     "img/4_enemie_boss_chicken/1_walk/G1.png",
@@ -56,12 +64,12 @@ class Endboss extends MovableObject {
     this.loadImages(this.IMAGES_ATTACK);
     this.loadImages(this.IMAGES_HURT);
     this.loadImages(this.IMAGES_DEAD);
-    this.x = 5050;
+    this.x = this.startX;
     this.animate();
   }
 
   hit() {
-    this.energy -= 10;
+    this.energy -= 20;
 
     if (this.energy <= 0) {
       this.energy = 0;
@@ -74,14 +82,14 @@ class Endboss extends MovableObject {
     this.currentImage = 0;
 
     let hurtAnimation = setInterval(() => {
-        this.playAnimation(this.IMAGES_HURT);
+      this.playAnimation(this.IMAGES_HURT);
 
-        if(this.currentImage >= this.IMAGES_HURT.length) {
-            clearInterval(hurtAnimation);
-            this.currentState = "WALK";
-            this.currentImage = 0;
-        }
-    } , 200);   
+      if (this.currentImage >= this.IMAGES_HURT.length) {
+        clearInterval(hurtAnimation);
+        this.currentState = "WALK";
+        this.currentImage = 0;
+      }
+    }, 200);
   }
 
   animate() {
@@ -90,15 +98,121 @@ class Endboss extends MovableObject {
         this.playAnimation(this.IMAGES_DEAD);
         return;
       }
+
       if (this.currentState === "WALK") {
         this.playAnimation(this.IMAGES_WALKING);
       }
+
       if (this.currentState === "ALERT") {
         this.playAnimation(this.IMAGES_ALERT);
       }
+
       if (this.currentState === "ATTACK") {
         this.playAnimation(this.IMAGES_ATTACK);
       }
+
+      if (this.currentState === "HURT") {
+        this.playAnimation(this.IMAGES_HURT);
+      }
     }, 200);
+
+    setInterval(() => {
+      if (!this.world || this.isEndbossDead) {
+        return;
+      }
+
+      const character = this.world.character;
+      const distance = this.x - character.x;
+
+      if (
+        distance <= this.alertDistance &&
+        this.currentState === "WALK" &&
+        !this.alertFinished
+      ) {
+        this.currentState = "ALERT";
+        this.currentImage = 0;
+
+        setTimeout(() => {
+          if (!this.isEndbossDead) {
+            this.alertFinished = true;
+            this.currentState = "WALK";
+            this.currentImage = 0;
+          }
+        }, this.IMAGES_ALERT.length * 200);
+
+        return;
+      }
+
+      if (this.alertFinished && this.currentState === "WALK") {
+        if (distance <= this.attackDistance) {
+          this.startAttack();
+        } else {
+          this.moveBoss(distance);
+        }
+      }
+    }, 1000 / 60);
+  }
+
+  moveBoss(distance) {
+    if (distance <= this.attackDistance) {
+      return;
+    }
+
+    if (distance <= this.returnDistance) {
+      this.x -= this.bossSpeed;
+      this.otherDirection = false;
+      return;
+    }
+
+    if (this.x < this.startX) {
+      this.x += this.bossSpeed;
+      this.otherDirection = true;
+    }
+  }
+
+  startAttack() {
+    if (this.attackCooldown || this.isEndbossDead) {
+      return;
+    }
+
+    this.attackCooldown = true;
+    this.attackHit = false;
+    this.currentState = "ATTACK";
+    this.currentImage = 0;
+
+    const attackFrameTime = this.attackHitFrame * 200;
+
+    setTimeout(() => {
+      if (!this.isEndbossDead) {
+        this.dealAttackDamage();
+      }
+    }, attackFrameTime);
+
+    setTimeout(
+      () => {
+        if (!this.isEndbossDead) {
+          this.currentState = "WALK";
+          this.currentImage = 0;
+        }
+
+        this.attackCooldown = false;
+      },
+      this.IMAGES_ATTACK.length * 200 + 300,
+    );
+  }
+
+  dealAttackDamage() {
+    if (this.attackHit || !this.world) {
+      return;
+    }
+
+    const character = this.world.character;
+
+    if (this.isColliding(character)) {
+      character.hit();
+      this.world.statusBar.setPercentage(character.energy);
+
+      this.attackHit = true;
+    }
   }
 }
