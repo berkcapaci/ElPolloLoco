@@ -11,6 +11,8 @@ class Character extends MovableObject {
   collectedCoins = 0;
   collectedBottles = 0;
   isFrozen = false;
+  canPlayJumpSound = true;
+  deathSoundPlayed = false;
 
   IMAGES_WALKING = [
     "img/2_character_pepe/2_walk/W-21.png",
@@ -84,7 +86,13 @@ class Character extends MovableObject {
 
       if (this.world.keyboard.SPACE && !this.isAboveGround()) {
         this.jump();
+        this.world.soundManager.play("jump");
+        this.canPlayJumpSound = false;
       }
+      if (!this.world.keyboard.SPACE) {
+        this.canPlayJumpSound = true;
+      }
+      this.checkChickenStomp();
 
       this.world.camera_x = -this.x + 100;
     }, 1000 / 60);
@@ -147,6 +155,67 @@ class Character extends MovableObject {
       return;
     }
     super.moveRight();
+  }
+
+  checkChickenStomp() {
+    if (!this.isAboveGround()) {
+      return;
+    }
+
+    if (this.speedY >= 0) {
+      return;
+    }
+
+    this.world.level.enemies.forEach((enemy) => {
+      if (!(enemy instanceof Chicken)) {
+        return;
+      }
+
+      if (enemy.isChickenDead) {
+        return;
+      }
+
+      const characterBottom = this.y + this.height;
+      const chickenTop = enemy.y;
+
+      const stompOffsetX = 30;
+      const stompWidth = this.width - 60;
+
+      const characterLeft = this.x + stompOffsetX;
+      const characterRight = characterLeft + stompWidth;
+
+      const chickenLeft = enemy.x;
+      const chickenRight = enemy.x + enemy.width;
+
+      const isHorizontallyOverlapping =
+        characterRight > chickenLeft && characterLeft < chickenRight;
+
+      const isLandingOnChicken =
+        characterBottom >= chickenTop && characterBottom <= chickenTop + 30;
+
+      if (isHorizontallyOverlapping && isLandingOnChicken) {
+        enemy.hit();
+        this.speedY = 20;
+      }
+    });
+  }
+
+  hit() {
+    if (this.isDead()) {
+      return;
+    }
+
+    super.hit();
+
+    if (this.energy > 0) {
+      this.world.soundManager.play("pepeHurt");
+      return;
+    }
+
+    if (!this.deathSoundPlayed) {
+      this.world.soundManager.play("pepeDeath");
+      this.deathSoundPlayed = true;
+    }
   }
 
   jump() {

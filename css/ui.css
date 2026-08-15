@@ -1,4 +1,26 @@
 /* =========================
+ROTATE SCREEN
+========================= */
+
+.rotate-screen {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: black;
+}
+
+.rotate-screen img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* =========================
 GAME CONTAINER
 ========================= */
 
@@ -13,48 +35,167 @@ canvas {
   background-color: black;
 }
 
-/* =========================
+#mute-button {
+  position: absolute;
+  left: 5px;
+  bottom: 5px;
+  width: 42px;
+  height: 42px;
+  border: 2px solid #5b2f0d;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.55);
+  font-size: 22px;
+  cursor: pointer;
+  z-index: 15;
+}
+
+.fullscreen-button {
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+  width: 42px;
+  height: 42px;
+  border: none;
+  border-radius: 8px;
+  background-color: rgba(0, 0, 0, 0.6);
+  color: white;
+  font-size: 22px;
+  cursor: pointer;
+  z-index: 20;
+}
+
+.game-container:fullscreen {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: black;
+}
+
+.game-container:fullscreen canvas {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.game-container:fullscreen .start-screen:not(.d-none) {
+  width: 100%;
+  height: 100%;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.fullscreen-button:hover {
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+/* ========== ===============
 START SCREEN
 ========================= */
 
 .start-screen {
   position: absolute;
   inset: 0;
-
   width: 720px;
   height: 480px;
-
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-
   gap: 24px;
-
   background: rgba(0, 0, 0, 0.35);
   border-radius: 16px;
   backdrop-filter: blur(4px);
-
   z-index: 10;
 }
 
 .start-screen h1 {
   margin: 0;
-
   font-family: "Rye", serif;
   font-size: 72px;
   letter-spacing: 3px;
-
   color: #f6c453;
-
   text-shadow:
     -2px -2px 0 #5b2f0d,
     2px -2px 0 #5b2f0d,
     -2px 2px 0 #5b2f0d,
     2px 2px 0 #5b2f0d,
     0 6px 12px rgba(0, 0, 0, 0.6);
-
   animation: floatLogo 3s ease-in-out infinite;
+}
+
+/* =========================
+START MENU
+========================= */
+
+.start-menu {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  margin-top: 10px;
+}
+
+.start-menu button {
+  width: 250px;
+}
+
+/* =========================
+MENU BUTTONS
+========================= */
+
+.menu-button {
+  padding: 10px 28px;
+  font-family: "Rye", serif;
+  font-size: 24px;
+  color: white;
+  background: #b64618;
+  border: 3px solid #5b2f0d;
+  border-radius: 12px;
+  cursor: pointer;
+  transition:
+    background 150ms ease,
+    transform 150ms ease;
+}
+
+.menu-button:hover {
+  background: #d55b28;
+  transform: scale(1.05);
+}
+
+.menu-button:active {
+  transform: scale(0.98);
+}
+
+/* =========================
+PLAY BUTTON
+========================= */
+
+#play-button {
+  padding: 14px 42px;
+  font-family: "Rye", serif;
+  font-size: 24px;
+  color: white;
+  background: #b64618;
+  border: 3px solid #5b2f0d;
+  border-radius: 12px;
+  cursor: pointer;
+  transition:
+    background 150ms ease,
+    transform 150ms ease;
+}
+
+#play-button:hover {
+  background: #d55b28;
+  transform: scale(1.05);
+}
+
+#play-button:active {
+  transform: scale(0.98);
 }
 
 /* =========================
@@ -64,28 +205,21 @@ WIN SCREEN
 .win-screen {
   position: absolute;
   inset: 0;
-
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-
   gap: 24px;
-
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(0, 0, 0, 0.9);
   border-radius: 16px;
-
   z-index: 20;
 }
 
 .win-screen h1 {
   margin: 0;
-
   font-family: "Rye", serif;
   font-size: 64px;
-
   color: #f6c453;
-
   text-shadow:
     -2px -2px 0 #5b2f0d,
     2px -2px 0 #5b2f0d,
@@ -101,28 +235,21 @@ LOSE SCREEN
 .lose-screen {
   position: absolute;
   inset: 0;
-
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-
   gap: 24px;
-
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(0, 0, 0, 0.9);
   border-radius: 16px;
-
   z-index: 20;
 }
 
 .lose-screen h1 {
   margin: 0;
-
   font-family: "Rye", serif;
   font-size: 64px;
-
   color: #f6c453;
-
   text-shadow:
     -2px -2px 0 #5b2f0d,
     2px -2px 0 #5b2f0d,
@@ -137,28 +264,187 @@ GAME OVER BUTTON
 
 .game-over-button {
   padding: 14px 42px;
-
   font-family: "Rye", serif;
   font-size: 28px;
-
   color: white;
   background: #b64618;
-
   border: 3px solid #5b2f0d;
   border-radius: 12px;
-
   cursor: pointer;
-
-  transition: all 150ms ease;
+  transition:
+    background 150ms ease,
+    transform 150ms ease;
 }
 
-.game-over-button {
+.game-over-button:hover {
   background: #d55b28;
   transform: scale(1.05);
 }
 
-.game-over-button {
+.game-over-button:active {
   transform: scale(0.98);
+}
+
+/* =========================
+SETTINGS / CONTROLS /
+IMPRESSUM SCREENS
+========================= */
+
+.settings-screen,
+.controls-screen,
+.impressum-screen {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 28px;
+  background: rgba(0, 0, 0, 0.9);
+  border-radius: 16px;
+  z-index: 20;
+}
+
+/* =========================
+SCREEN HEADINGS
+========================= */
+
+.settings-screen h2,
+.controls-screen h2,
+.impressum-screen h2,
+.shop-screen {
+  margin: 0;
+  font-family: "Rye", serif;
+  font-size: 54px;
+  color: #f6c453;
+  text-shadow:
+    -2px -2px 0 #5b2f0d,
+    2px -2px 0 #5b2f0d,
+    -2px 2px 0 #5b2f0d,
+    2px 2px 0 #5b2f0d,
+    0 6px 12px rgba(0, 0, 0, 0.6);
+}
+
+/* =========================
+SETTINGS CONTENT
+========================= */
+
+.settings-content {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 420px;
+}
+
+.setting {
+  display: grid;
+  grid-template-columns: 100px 1fr 55px;
+  align-items: center;
+  gap: 16px;
+}
+
+.setting label {
+  font-family: "Rye", serif;
+  font-size: 22px;
+  color: white;
+}
+
+.setting span {
+  font-family: "Rye", serif;
+  font-size: 18px;
+  color: #f6c453;
+  text-align: right;
+}
+
+/* =========================
+VOLUME SLIDER
+========================= */
+
+.setting input[type="range"] {
+  width: 100%;
+  height: 8px;
+  cursor: pointer;
+  accent-color: #f6c453;
+}
+
+/* =========================
+CONTROLS SCREEN
+========================= */
+
+.controls-screen .controls-grid {
+  display: grid;
+  grid-template-columns: 130px 180px;
+  align-items: center;
+  column-gap: 24px;
+  row-gap: 18px;
+}
+
+.controls-screen .controls-grid span {
+  font-family: "Rye", serif;
+  font-size: 20px;
+  color: white;
+}
+
+/* =========================
+KEYS
+========================= */
+
+.key {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 48px;
+  height: 42px;
+  background: linear-gradient(to bottom, #fdfdfd, #d9d9d9);
+  color: #333;
+  border: 2px solid #888;
+  border-radius: 8px;
+  font-family: Arial, sans-serif;
+  font-size: 18px;
+  font-weight: bold;
+  box-shadow:
+    0 3px 0 #666,
+    0 6px 10px rgba(0, 0, 0, 0.35);
+}
+
+.key-group {
+  display: flex;
+  gap: 8px;
+}
+
+.key-space {
+  width: 120px;
+}
+
+/* =========================
+IMPRESSUM
+========================= */
+
+.impressum-content {
+  max-width: 560px;
+  max-height: 280px;
+  overflow-y: auto;
+  padding: 10px 20px;
+  text-align: center;
+  font-family: "Rye", serif;
+  font-size: 14px;
+  line-height: 1.35;
+  color: white;
+}
+.impressum-content h3 {
+  margin: 10px 0 5px;
+  font-size: 18px;
+  color: #f6c453;
+}
+.impressum-content p {
+  margin: 5px 0 10px;
+}
+.impressum-content a {
+  color: #f6c453;
+  text-decoration: none;
+}
+.impressum-content a:hover {
+  text-decoration: underline;
 }
 
 /* =========================
@@ -177,97 +463,10 @@ FLOATING LOGO
   0% {
     transform: translateY(0);
   }
-
   50% {
     transform: translateY(-8px);
   }
-
   100% {
     transform: translateY(0);
   }
-}
-
-/* =========================
-PLAY BUTTON
-========================= */
-
-#play-button {
-  padding: 14px 42px;
-
-  font-family: "Rye", serif;
-  font-size: 28px;
-
-  color: white;
-  background: #b64618;
-
-  border: 3px solid #5b2f0d;
-  border-radius: 12px;
-
-  cursor: pointer;
-
-  transition: all 150ms ease;
-}
-
-#play-button {
-  background: #d55b28;
-  transform: scale(1.05);
-}
-
-#play-button {
-  transform: scale(0.98);
-}
-
-/* =========================
-CONTROLS
-========================= */
-
-.controls {
-  color: white;
-  text-align: center;
-  text-shadow: 2px 2px 5px black;
-}
-
-.controls h2 {
-  margin-bottom: 20px;
-  letter-spacing: 1px;
-}
-
-.controls-grid {
-  display: grid;
-  grid-template-columns: 120px auto;
-  gap: 16px 20px;
-  align-items: center;
-}
-
-.key {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  width: 48px;
-  height: 42px;
-
-  background: linear-gradient(to bottom, #fdfdfd, #d9d9d9);
-
-  color: #333;
-
-  border: 2px solid #888;
-  border-radius: 8px;
-
-  font-family: Arial, sans-serif;
-  font-size: 18px;
-  font-weight: bold;
-
-  box-shadow:
-    0 3px 0 #666,
-    0 6px 10px rgba(0, 0, 0, 0.35);
-}
-
-.key-group {
-  display: flex;
-  gap: 8px;
-}
-
-.key-space {
-  width: 120px;
 }

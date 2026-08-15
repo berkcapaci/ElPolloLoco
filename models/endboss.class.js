@@ -2,7 +2,11 @@ class Endboss extends MovableObject {
   height = 350;
   width = 350;
   y = 100;
-  energy = 100;
+  energy = 400;
+  collisionOffsetX = 60;
+  collisionOffsetY = 40;
+  collisionWidth = 120;
+  collisionHeight = 80;
   isEndbossDead = false;
   deathAnimationFinished = false;
   currentState = "WALK";
@@ -10,12 +14,13 @@ class Endboss extends MovableObject {
   attackDistance = 250;
   startX = 5050;
   returnDistance = 900;
-  bossSpeed = 2;
+  bossSpeed = 3;
   alertFinished = false;
   attackCooldown = false;
   attackHit = false;
   attackHitFrame = 4;
   isFrozen = false;
+  deathSoundPlayed = false;
 
   IMAGES_WALKING = [
     "img/4_enemie_boss_chicken/1_walk/G1.png",
@@ -60,7 +65,6 @@ class Endboss extends MovableObject {
 
   constructor() {
     super().loadImage(this.IMAGES_WALKING[0]);
-
     this.loadImages(this.IMAGES_WALKING);
     this.loadImages(this.IMAGES_ALERT);
     this.loadImages(this.IMAGES_ATTACK);
@@ -72,26 +76,37 @@ class Endboss extends MovableObject {
 
   hit() {
     this.energy -= 20;
-
     if (this.energy <= 0) {
       this.energy = 0;
       this.isEndbossDead = true;
       this.currentState = "DEAD";
       this.currentImage = 0;
+      if (!this.deathSoundPlayed) {
+        this.world.soundManager.play("bossDeath");
+        this.deathSoundPlayed = true;
+      }
       return;
     }
     this.currentState = "HURT";
     this.currentImage = 0;
-
+    this.world.soundManager.play("bossHurt");
     let hurtAnimation = setInterval(() => {
       this.playAnimation(this.IMAGES_HURT);
-
       if (this.currentImage >= this.IMAGES_HURT.length) {
         clearInterval(hurtAnimation);
         this.currentState = "WALK";
         this.currentImage = 0;
       }
     }, 200);
+  }
+
+  isCollidingWithBottle(bottle) {
+    return (
+      bottle.x + bottle.width > this.x + this.collisionOffsetX &&
+      bottle.x < this.x + this.collisionOffsetX + this.collisionWidth &&
+      bottle.y + bottle.height > this.y + this.collisionOffsetY &&
+      bottle.y < this.y + this.collisionOffsetY + this.collisionHeight
+    );
   }
 
   animate() {
@@ -109,32 +124,25 @@ class Endboss extends MovableObject {
       if (this.isFrozen) {
         return;
       }
-
       if (this.currentState === "WALK") {
         this.playAnimation(this.IMAGES_WALKING);
       }
-
       if (this.currentState === "ALERT") {
         this.playAnimation(this.IMAGES_ALERT);
       }
-
       if (this.currentState === "ATTACK") {
         this.playAnimation(this.IMAGES_ATTACK);
       }
-
       if (this.currentState === "HURT") {
         this.playAnimation(this.IMAGES_HURT);
       }
     }, 200);
-
     setInterval(() => {
       if (!this.world || this.isEndbossDead || this.isFrozen) {
         return;
       }
-
       const character = this.world.character;
       const distance = this.x - character.x;
-
       if (
         distance <= this.alertDistance &&
         this.currentState === "WALK" &&
@@ -142,7 +150,7 @@ class Endboss extends MovableObject {
       ) {
         this.currentState = "ALERT";
         this.currentImage = 0;
-
+        this.world.soundManager.play("bossAlert");
         setTimeout(() => {
           if (!this.isEndbossDead) {
             this.alertFinished = true;
@@ -150,10 +158,8 @@ class Endboss extends MovableObject {
             this.currentImage = 0;
           }
         }, this.IMAGES_ALERT.length * 200);
-
         return;
       }
-
       if (this.alertFinished && this.currentState === "WALK") {
         if (distance <= this.attackDistance) {
           this.startAttack();
@@ -168,13 +174,11 @@ class Endboss extends MovableObject {
     if (distance <= this.attackDistance) {
       return;
     }
-
     if (distance <= this.returnDistance) {
       this.x -= this.bossSpeed;
       this.otherDirection = false;
       return;
     }
-
     if (this.x < this.startX) {
       this.x += this.bossSpeed;
       this.otherDirection = true;
@@ -182,30 +186,26 @@ class Endboss extends MovableObject {
   }
 
   startAttack() {
-    if (this.attackCooldown || this.isEndbossDead) {
+    if (this.attackCooldown || this.isEndbossDead || this.isFrozen) {
       return;
     }
-
     this.attackCooldown = true;
     this.attackHit = false;
     this.currentState = "ATTACK";
     this.currentImage = 0;
-
+    this.world.soundManager.play("bossAttack");
     const attackFrameTime = this.attackHitFrame * 200;
-
     setTimeout(() => {
       if (!this.isEndbossDead) {
         this.dealAttackDamage();
       }
     }, attackFrameTime);
-
     setTimeout(
       () => {
         if (!this.isEndbossDead) {
           this.currentState = "WALK";
           this.currentImage = 0;
         }
-
         this.attackCooldown = false;
       },
       this.IMAGES_ATTACK.length * 200 + 300,
@@ -213,23 +213,17 @@ class Endboss extends MovableObject {
   }
 
   dealAttackDamage() {
-    if (this.attackHit || !this.world) {
+    if (this.attackHit || !this.world || this.isFrozen) {
       return;
     }
-
     const character = this.world.character;
-
     const attackDistance = 180;
-
     const bossLeft = this.x;
     const characterRight = character.x + character.width;
-
     const distance = bossLeft - characterRight;
-
     if (distance <= attackDistance && distance >= -character.width) {
       character.hit();
       this.world.statusBar.setPercentage(character.energy);
-
       this.attackHit = true;
     }
   }

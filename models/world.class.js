@@ -23,6 +23,8 @@ class World {
   loseScreenTimeout;
   winScreenTimeout;
   isStopped = false;
+  soundManager;
+
   constructor(canvas, keyboard) {
     this.canvas = canvas;
     this.ctx = canvas.getContext("2d");
@@ -37,6 +39,7 @@ class World {
     this.coinCounter = new CoinCounter();
     this.bottleCounter = new BottleCounter();
     this.endbossBar = new EndbossBar();
+    this.soundManager = new SoundManager();
     this.draw();
     this.setWorld();
     this.run();
@@ -45,9 +48,7 @@ class World {
   setWorld() {
     this.character.world = this;
     this.level.enemies.forEach((enemy) => {
-      if (enemy instanceof Endboss) {
-        enemy.world = this;
-      }
+      enemy.world = this;
     });
   }
 
@@ -65,17 +66,35 @@ class World {
       this.removeDeadChickens();
       this.checkWinCondition();
       this.checkLoseCondition();
-    }, 200);
+    }, 1000 / 60);
   }
 
   stop() {
     this.isStopped = true;
-
     clearInterval(this.gameInterval);
     cancelAnimationFrame(this.animationFrameId);
     clearTimeout(this.throwCooldownTimeout);
     clearTimeout(this.loseScreenTimeout);
     clearTimeout(this.winScreenTimeout);
+
+    this.level.enemies.forEach((enemy) => {
+      if (enemy instanceof Endboss || enemy instanceof Chicken) {
+        enemy.isFrozen = true;
+      }
+    });
+  }
+
+  resume() {
+    this.isStopped = false;
+
+    this.level.enemies.forEach((enemy) => {
+      if (enemy instanceof Endboss || enemy instanceof Chicken) {
+        enemy.isFrozen = false;
+      }
+    });
+
+    this.draw();
+    this.run();
   }
 
   checkCollisions() {
@@ -83,37 +102,16 @@ class World {
       if (enemy.isChickenDead || enemy.isEndbossDead) {
         return;
       }
-      if (this.checkJumpOnEnemy(enemy)) {
-        return;
-      }
+
       if (this.character.isColliding(enemy)) {
         if (this.character.isHurt()) {
           return;
         }
+
         this.character.hit();
         this.statusBar.setPercentage(this.character.energy);
       }
     });
-  }
-
-  checkJumpOnEnemy(enemy) {
-    if (!(enemy instanceof Chicken)) {
-      return false;
-    }
-    let characterBottom = this.character.y + this.character.height;
-    let chickenTop = enemy.y;
-    let isFalling = this.character.speedY < 0;
-    let isAboveChicken =
-      this.character.x + this.character.width > enemy.x - 30 &&
-      this.character.x < enemy.x + enemy.width + 30;
-    let isLandingOnChicken =
-      characterBottom >= chickenTop && characterBottom <= chickenTop + 60;
-    if (isFalling && isAboveChicken && isLandingOnChicken) {
-      enemy.hit();
-      this.character.speedY = 20;
-      return true;
-    }
-    return false;
   }
 
   checkCoinCollisions() {
@@ -146,12 +144,18 @@ class World {
       if (bottle.isBroken) {
         return;
       }
-
       this.level.enemies.forEach((enemy) => {
-        if (bottle.isColliding(enemy)) {
+        let isBottleCollision = false;
+        if (enemy instanceof Endboss) {
+          isBottleCollision = enemy.isCollidingWithBottle(bottle);
+        } else if (enemy instanceof Chicken) {
+          isBottleCollision = enemy.isCollidingWithBottle(bottle);
+        } else {
+          isBottleCollision = bottle.isColliding(enemy);
+        }
+        if (isBottleCollision) {
           bottle.breakBottle();
           enemy.hit();
-
           if (enemy instanceof Endboss) {
             this.endbossBar.setEnergy(enemy.energy);
           }
@@ -170,10 +174,12 @@ class World {
       this.canThrowBottle
     ) {
       let bottle = new ThrowableObject(
-        this.character.x + 100,
-        this.character.y + 100,
+        this.character.x + 50,
+        this.character.y + 70,
       );
+      bottle.world = this;
       this.throwableObjects.push(bottle);
+      this.soundManager.play("bottleThrow");
       this.character.collectedBottles--;
       this.bottleCounter.currentBottleAmount = this.character.collectedBottles;
       this.canThrowBottle = false;
@@ -302,7 +308,11 @@ class World {
       this.gameWon = true;
       this.character.isFrozen = true;
 
-      this.showWinScreen();
+      this.winScreenTimeout = setTimeout(() => {
+        if (!this.isStopped) {
+          this.showWinScreen();
+        }
+      }, 1000);
     }
   }
 

@@ -1,11 +1,11 @@
 class EndbossBar extends DrawableObject {
-  x = 430;
-  y = 20;
+  x = 500;
+  y = 10;
   width = 200;
-  height = 50;
+  height = 60;
 
-  maxEnergy = 100;
-  currentEnergy = 100;
+  maxEnergy = 400;
+  currentEnergy = 400;
 
   IMAGES = [
     "img/7_statusbars/2_statusbar_endboss/orange/orange0.png",
@@ -20,34 +20,36 @@ class EndbossBar extends DrawableObject {
     super();
 
     this.loadImages(this.IMAGES);
-    this.setEnergy(100);
+    this.setEnergy(this.maxEnergy);
   }
 
   setEnergy(energy) {
-    this.currentEnergy = energy;
+    this.currentEnergy = Math.max(0, Math.min(energy, this.maxEnergy));
 
     let path = this.IMAGES[this.resolveImageIndex()];
     this.img = this.imageCache[path];
   }
 
   resolveImageIndex() {
-    if (this.currentEnergy >= 100) {
+    let percentage = (this.currentEnergy / this.maxEnergy) * 100;
+
+    if (percentage >= 100) {
       return 5;
     }
 
-    if (this.currentEnergy >= 80) {
+    if (percentage >= 80) {
       return 4;
     }
 
-    if (this.currentEnergy >= 60) {
+    if (percentage >= 60) {
       return 3;
     }
 
-    if (this.currentEnergy >= 40) {
+    if (percentage >= 40) {
       return 2;
     }
 
-    if (this.currentEnergy >= 20) {
+    if (percentage >= 20) {
       return 1;
     }
 

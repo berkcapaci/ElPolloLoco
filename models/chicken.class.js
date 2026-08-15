@@ -5,6 +5,11 @@ class Chicken extends MovableObject {
   energy = 0;
   isChickenDead = false;
   deathTime = 0;
+  isFrozen = false;
+  collisionOffsetX = 0;
+  collisionOffsetY = 0;
+  collisionWidth = 60;
+  collisionHeight = 60;
 
   IMAGES_WALKING = [
     "img/3_enemies_chicken/chicken_normal/1_walk/1_w.png",
@@ -28,20 +33,33 @@ class Chicken extends MovableObject {
     this.energy = 0;
     this.isChickenDead = true;
     this.deathTime = new Date().getTime();
+    if (this.world) {
+      this.world.soundManager.play("chickenDeath");
+    }
     this.loadImage(this.IMAGE_DEAD);
   }
 
   animate() {
     setInterval(() => {
-      if (!this.isChickenDead) {
-        this.moveLeft();
+      if (this.isFrozen || this.isChickenDead) {
+        return;
       }
+      this.moveLeft();
     }, 1000 / 60);
-
     setInterval(() => {
-      if (!this.isChickenDead) {
-        this.playAnimation(this.IMAGES_WALKING);
+      if (this.isFrozen || this.isChickenDead) {
+        return;
       }
+      this.playAnimation(this.IMAGES_WALKING);
     }, 200);
+  }
+
+  isCollidingWithBottle(bottle) {
+    return (
+      bottle.x + bottle.width > this.x + this.collisionOffsetX &&
+      bottle.x < this.x + this.collisionOffsetX + this.collisionWidth &&
+      bottle.y + bottle.height > this.y + this.collisionOffsetY &&
+      bottle.y < this.y + this.collisionOffsetY + this.collisionHeight
+    );
   }
 }

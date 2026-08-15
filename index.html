@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="css/style.css" />
     <link rel="stylesheet" href="css/ui.css" />
     <link rel="stylesheet" href="css/game.css" />
+    <link rel="stylesheet" href="css/shop.css" />
     <link rel="stylesheet" href="css/media.css" />
     <link
       rel="shortcut icon"
@@ -27,6 +28,7 @@
     <script src="models/coin-counter.class.js"></script>
     <script src="models/bottle-counter.class.js"></script>
     <script src="models/endboss-bar.class.js"></script>
+    <script src="models/sound-manager.class.js"></script>
     <script src="models/keyboard.class.js"></script>
     <script src="models/level.class.js"></script>
     <script src="levels/level1.js"></script>
@@ -34,46 +36,293 @@
     <script src="js/game.js"></script>
   </head>
   <body>
+    <!-- =========================
+           ROTATE SCREEN
+      ========================== -->
+    <div id="rotate-screen" class="rotate-screen d-none">
+      <img
+        src="assets/image/rotatedevice.png"
+        alt="Please rotate your device"
+      />
+    </div>
+
+    <!-- =========================
+           MOBILE CONTROLS
+      ========================== -->
+
+    <div id="mobile-controls" class="mobile-controls">
+      <div class="mobile-movement-controls">
+        <button id="mobile-left" class="mobile-control-button">←</button>
+        <button id="mobile-right" class="mobile-control-button">→</button>
+      </div>
+
+      <div class="mobile-action-controls">
+        <button id="mobile-jump" class="mobile-control-button">Jump</button>
+
+        <button id="mobile-throw" class="mobile-control-button">
+          <img
+            src="img/7_statusbars/3_icons/icon_salsa_bottle.png"
+            alt="Throw bottle"
+          />
+        </button>
+      </div>
+    </div>
+
     <div class="game-container">
+      <!-- =========================
+           START SCREEN
+      ========================== -->
+
       <div class="start-screen">
         <h1>El Pollo Loco</h1>
 
-        <button id="play-button" onclick="startGame()">Play</button>
+        <div class="start-menu">
+          <button id="play-button" onclick="startGame()">Play</button>
 
-        <div class="controls">
-          <div class="controls-grid">
-            <div class="key-group">
-              <div class="key">←</div>
-              <div class="key">→</div>
-            </div>
-            <span>Move</span>
+          <button class="menu-button" onclick="openShop()">Shop</button>
 
-            <div class="key key-space">SPACE</div>
-            <span>Jump</span>
+          <button class="menu-button" onclick="openSettings()">
+            Sound Settings
+          </button>
 
-            <div class="key">D</div>
-            <span>Throw Bottle</span>
-          </div>
+          <button class="menu-button" onclick="openControls()">Controls</button>
+
+          <button class="menu-button" onclick="openImpressum()">
+            Impressum
+          </button>
         </div>
       </div>
 
+      <!-- =========================
+           CANVAS
+      ========================== -->
+
       <canvas id="canvas" width="720" height="480"></canvas>
+
+      <!-- =========================
+           FULLSCREEN BUTTON
+      ========================== -->
+
+      <button
+        id="fullscreen-button"
+        class="fullscreen-button"
+        onclick="toggleFullscreen()"
+        aria-label="Toggle fullscreen"
+      >
+        ⛶
+      </button>
+
+      <!-- =========================
+           MUTE BUTTON
+      ========================== -->
+
+      <button id="mute-button" onclick="toggleMute()">🔊</button>
+
+      <!-- =========================
+     SOUND SETTINGS SCREEN
+========================== -->
+
+      <div id="settings-screen" class="settings-screen d-none">
+        <h2>Settings</h2>
+
+        <div class="settings-content">
+          <div class="setting">
+            <label for="music-volume">Music</label>
+
+            <input
+              id="music-volume"
+              type="range"
+              min="0"
+              max="1"
+              step="0.01"
+              value="0.3"
+            />
+
+            <span id="music-volume-value">30%</span>
+          </div>
+
+          <div class="setting">
+            <label for="effects-volume">Effects</label>
+
+            <input
+              id="effects-volume"
+              type="range"
+              min="0"
+              max="1"
+              step="0.01"
+              value="0.9"
+            />
+
+            <span id="effects-volume-value">90%</span>
+          </div>
+        </div>
+
+        <button class="game-over-button" onclick="closeSettings()">Back</button>
+      </div>
+
+      <!-- =========================
+     SHOP SCREEN
+========================== -->
+
+      <div id="shop-screen" class="shop-screen d-none">
+        <h2>Shop</h2>
+        <div class="shop-balance">
+          <span class="shop-balance-label">Your Coins:</span>
+          <div class="shop-balance-value">
+            <img src="img/7_statusbars/3_icons/icon_coin.png" alt="Coin" />
+            <span id="shop-coin-amount">0</span>
+          </div>
+        </div>
+        <div class="shop-content">
+          <div class="shop-item">
+            <h3>1 Bottle</h3>
+            <img
+              class="shop-item-image shop-bottle-image"
+              src="img/7_statusbars/3_icons/icon_salsa_bottle.png"
+              alt="Bottle"
+            />
+            <div class="shop-price">
+              <img src="img/8_coin/coin_1.png" alt="Coin" />
+              <span>3</span>
+            </div>
+            <button>Buy</button>
+          </div>
+          <div class="shop-item">
+            <h3>5 Bottles</h3>
+            <img
+              class="shop-item-image shop-bottle-image"
+              src="img/7_statusbars/3_icons/icon_salsa_bottle.png"
+              alt="Bottles"
+            />
+            <div class="shop-price">
+              <img src="img/8_coin/coin_1.png" alt="Coin" />
+              <span>10</span>
+            </div>
+            <button>Buy</button>
+          </div>
+          <div class="shop-item">
+            <h3>Coin Magnet</h3>
+            <img
+              class="shop-item-image shop-magnet-image"
+              src="assets/image/magnet.png"
+              alt="Coin Magnet"
+            />
+            <div class="shop-price">
+              <img src="img/8_coin/coin_1.png" alt="Coin" />
+              <span>15</span>
+            </div>
+            <button>Buy</button>
+          </div>
+        </div>
+        <button class="game-over-button shop-back-button" onclick="closeShop()">
+          Back
+        </button>
+      </div>
+
+      <!-- =========================
+           CONTROLS SCREEN
+      ========================== -->
+
+      <div id="controls-screen" class="controls-screen d-none">
+        <h2>Controls</h2>
+
+        <div class="controls-grid">
+          <div class="key-group">
+            <div class="key">←</div>
+            <div class="key">→</div>
+          </div>
+          <span> Move </span>
+
+          <div class="key key-space">SPACE</div>
+          <span> Jump </span>
+
+          <div class="key">D</div>
+          <span> Throw Bottle </span>
+
+          <div class="key">S</div>
+          <span> Shop </span>
+        </div>
+
+        <button class="game-over-button" onclick="closeControls()">Back</button>
+      </div>
+
+      <!-- =========================
+           IMPRESSUM SCREEN
+      ========================== -->
+
+      <div id="impressum-screen" class="impressum-screen d-none">
+        <h2>Impressum</h2>
+
+        <div class="impressum-content">
+          <h3>Angaben gemäß § 5 DDG</h3>
+
+          <p>
+            <strong>Berk Capaci</strong><br />
+            Burgstraße 32<br />
+            59755, Arnsberg<br />
+            Deutschland
+          </p>
+
+          <h3>Kontakt</h3>
+
+          <p>
+            E-Mail:
+            <a href="mailto:[berkcapaci@hotmail.com.tr]">
+              berkcapaci@hotmail.com.tr
+            </a>
+          </p>
+
+          <p>Telefon: 015236745853</p>
+
+          <h3>Projekt</h3>
+
+          <p>
+            El Pollo Loco ist ein browserbasiertes JavaScript-Spiel, das im
+            Rahmen eines Bildungs- und Portfolio-Projekts entwickelt wurde.
+          </p>
+
+          <p>
+            Das Projekt dient ausschließlich zu Lern- und Demonstrationszwecken
+            und ist nicht als kommerzielles Angebot gedacht.
+          </p>
+
+          <h3>Verantwortlich für den Inhalt</h3>
+
+          <p>
+            Berk Capaci<br />
+            Burgstraße 32<br />
+            59755, Arnsberg
+          </p>
+        </div>
+
+        <button class="game-over-button" onclick="closeImpressum()">
+          Back
+        </button>
+      </div>
+
+      <!-- =========================
+           WIN SCREEN
+      ========================== -->
 
       <div id="win-screen" class="win-screen d-none">
         <h1>You Win!</h1>
 
         <button class="game-over-button" onclick="restartGame()">
-          Try Again
+          Play Again
         </button>
 
         <button class="game-over-button" onclick="showMenu()">Menu</button>
       </div>
 
+      <!-- =========================
+           LOSE SCREEN
+      ========================== -->
+
       <div id="lose-screen" class="lose-screen d-none">
         <h1>You Lost</h1>
 
         <button class="game-over-button" onclick="restartGame()">
-          Try Again
+          Play Again
         </button>
 
         <button class="game-over-button" onclick="showMenu()">Menu</button>
