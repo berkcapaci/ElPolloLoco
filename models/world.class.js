@@ -193,7 +193,6 @@ class World {
       (enemy) => enemy instanceof Endboss,
     );
     if (!endboss) {
-      console.log("NO ENDBOSS FOUND");
       return false;
     }
     const screenX = endboss.x + this.camera_x;

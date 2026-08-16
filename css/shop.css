@@ -13,6 +13,7 @@ SHOP SCREEN
   border-radius: 16px;
   z-index: 20;
 }
+
 .shop-screen h2 {
   margin: 0;
   font-family: "Rye", serif;
@@ -25,6 +26,7 @@ SHOP SCREEN
     2px 2px 0 #5b2f0d,
     0 6px 12px rgba(0, 0, 0, 0.6);
 }
+
 .shop-balance {
   display: flex;
   flex-direction: row;
@@ -65,6 +67,7 @@ SHOP SCREEN
   align-items: stretch;
   gap: 14px;
 }
+
 .shop-item {
   width: 145px;
   min-height: 165px;
@@ -79,23 +82,28 @@ SHOP SCREEN
   border-radius: 14px;
   text-align: center;
 }
+
 .shop-item h3 {
   margin: 0;
   font-family: "Rye", serif;
   font-size: 17px;
   color: white;
 }
+
 .shop-item-image {
   object-fit: contain;
 }
+
 .shop-bottle-image {
   width: 70px;
   height: 70px;
 }
+
 .shop-magnet-image {
   width: 65px;
   height: 65px;
 }
+
 .shop-price {
   display: flex;
   align-items: center;
@@ -107,11 +115,13 @@ SHOP SCREEN
   font-size: 15px;
   color: #f6c453;
 }
+
 .shop-price img {
   width: 90px;
   height: 90px;
   object-fit: contain;
 }
+
 .shop-item button {
   width: 100%;
   padding: 6px 16px;
@@ -126,13 +136,22 @@ SHOP SCREEN
     background 150ms ease,
     transform 150ms ease;
 }
+
 .shop-item button:hover {
   background: #d55b28;
   transform: scale(1.05);
 }
+
 .shop-item button:active {
   transform: scale(0.98);
 }
+
 .shop-back-button {
   margin-top: 4px;
+}
+
+.coming-soon {
+  font-size: 14px;
+  font-weight: bold;
+  margin-top: 8px;
 }

@@ -54,6 +54,8 @@ class SoundManager {
       this.isMuted = savedMuteState === "true";
     }
 
+    this.sounds.pepeSnore.loop = true;
+
     this.setMusicVolume(this.musicVolume);
 
     if (this.isMuted) {
@@ -65,17 +67,33 @@ class SoundManager {
 
   play(soundName) {
     const sound = this.sounds[soundName];
+
     if (!sound) {
       return;
     }
+
     sound.currentTime = 0;
+
     const soundVolume = this.soundVolumes[soundName] ?? 1.0;
+
     if (this.isMuted) {
       sound.volume = 0;
     } else {
       sound.volume = soundVolume * this.effectsVolume;
     }
+
     sound.play();
+  }
+
+  stop(soundName) {
+    const sound = this.sounds[soundName];
+
+    if (!sound) {
+      return;
+    }
+
+    sound.pause();
+    sound.currentTime = 0;
   }
 
   playMusic() {

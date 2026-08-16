@@ -15,6 +15,7 @@ class Character extends MovableObject {
   deathSoundPlayed = false;
   idleTime = 0;
   idleThreshold = 15000;
+  isSnoring = false;
 
   IMAGES_IDLE = [
     "img/2_character_pepe/1_idle/idle/I-1.png",
@@ -139,7 +140,8 @@ class Character extends MovableObject {
     const isMoving =
       this.world.keyboard.RIGHT ||
       this.world.keyboard.LEFT ||
-      this.world.keyboard.SPACE;
+      this.world.keyboard.SPACE ||
+      this.world.keyboard.D;
     if (isMoving || this.isAboveGround() || this.isHurt()) {
       this.resetIdleTime();
       return;
@@ -149,6 +151,10 @@ class Character extends MovableObject {
 
   resetIdleTime() {
     this.idleTime = 0;
+    if (this.isSnoring) {
+      this.world.soundManager.stop("pepeSnore");
+      this.isSnoring = false;
+    }
   }
 
   updateAnimation() {
@@ -173,6 +179,12 @@ class Character extends MovableObject {
     }
     if (this.idleTime >= this.idleThreshold) {
       this.playAnimation(this.IMAGES_LONG_IDLE);
+
+      if (!this.isSnoring) {
+        this.world.soundManager.play("pepeSnore");
+        this.isSnoring = true;
+      }
+
       return;
     }
     this.playAnimation(this.IMAGES_IDLE);
