@@ -1,7 +1,17 @@
 /* =========================
+CONTENT CONTAINER
+========================= */
+.content {
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+}
+
+/* =========================
 ROTATE SCREEN
 ========================= */
-
 .rotate-screen {
   position: fixed;
   inset: 0;
@@ -20,10 +30,17 @@ ROTATE SCREEN
   object-fit: contain;
 }
 
+.mobile-controls {
+  display: none !important;
+}
+
+.mobile-controls.active {
+  display: flex !important;
+}
+
 /* =========================
 GAME CONTAINER
 ========================= */
-
 .game-container {
   position: relative;
   width: 720px;
@@ -96,7 +113,6 @@ canvas {
 /* ========== ===============
 START SCREEN
 ========================= */
-
 .start-screen {
   position: absolute;
   inset: 0;
@@ -131,7 +147,6 @@ START SCREEN
 /* =========================
 START MENU
 ========================= */
-
 .start-menu {
   display: flex;
   flex-direction: column;
@@ -147,7 +162,6 @@ START MENU
 /* =========================
 MENU BUTTONS
 ========================= */
-
 .menu-button {
   padding: 10px 28px;
   font-family: "Rye", serif;
@@ -174,7 +188,6 @@ MENU BUTTONS
 /* =========================
 PLAY BUTTON
 ========================= */
-
 #play-button {
   padding: 14px 42px;
   font-family: "Rye", serif;
@@ -201,7 +214,6 @@ PLAY BUTTON
 /* =========================
 WIN SCREEN
 ========================= */
-
 .win-screen {
   position: absolute;
   inset: 0;
@@ -231,7 +243,6 @@ WIN SCREEN
 /* =========================
 LOSE SCREEN
 ========================= */
-
 .lose-screen {
   position: absolute;
   inset: 0;
@@ -261,7 +272,6 @@ LOSE SCREEN
 /* =========================
 GAME OVER BUTTON
 ========================= */
-
 .game-over-button {
   padding: 14px 42px;
   font-family: "Rye", serif;
@@ -289,7 +299,6 @@ GAME OVER BUTTON
 SETTINGS / CONTROLS /
 IMPRESSUM SCREENS
 ========================= */
-
 .settings-screen,
 .controls-screen,
 .impressum-screen {
@@ -308,7 +317,6 @@ IMPRESSUM SCREENS
 /* =========================
 SCREEN HEADINGS
 ========================= */
-
 .settings-screen h2,
 .controls-screen h2,
 .impressum-screen h2,
@@ -328,7 +336,6 @@ SCREEN HEADINGS
 /* =========================
 SETTINGS CONTENT
 ========================= */
-
 .settings-content {
   display: flex;
   flex-direction: column;
@@ -359,7 +366,6 @@ SETTINGS CONTENT
 /* =========================
 VOLUME SLIDER
 ========================= */
-
 .setting input[type="range"] {
   width: 100%;
   height: 8px;
@@ -370,7 +376,6 @@ VOLUME SLIDER
 /* =========================
 CONTROLS SCREEN
 ========================= */
-
 .controls-screen .controls-grid {
   display: grid;
   grid-template-columns: 130px 180px;
@@ -388,7 +393,6 @@ CONTROLS SCREEN
 /* =========================
 KEYS
 ========================= */
-
 .key {
   display: flex;
   justify-content: center;
@@ -419,7 +423,6 @@ KEYS
 /* =========================
 IMPRESSUM
 ========================= */
-
 .impressum-content {
   max-width: 560px;
   max-height: 280px;
@@ -450,7 +453,6 @@ IMPRESSUM
 /* =========================
 HIDDEN ELEMENT
 ========================= */
-
 .d-none {
   display: none !important;
 }
@@ -458,7 +460,6 @@ HIDDEN ELEMENT
 /* =========================
 FLOATING LOGO
 ========================= */
-
 @keyframes floatLogo {
   0% {
     transform: translateY(0);
@@ -469,4 +470,63 @@ FLOATING LOGO
   100% {
     transform: translateY(0);
   }
+}
+
+/* =========================
+   PAUSE SCREEN
+========================= */
+
+.pause-screen {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.7);
+}
+
+.pause-content {
+  width: 320px;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  background: rgba(40, 40, 40, 0.95);
+  border: 3px solid #f4c542;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.pause-content h2 {
+  margin: 0 0 10px;
+  font-family: "Rye", cursive;
+  font-size: 32px;
+  color: #f4c542;
+  text-align: center;
+}
+
+.pause-content button {
+  width: 220px;
+  padding: 12px 20px;
+  border: 2px solid #f4c542;
+  border-radius: 8px;
+  background: #8b4513;
+  color: white;
+  font-family: "Rye", cursive;
+  font-size: 16px;
+  cursor: pointer;
+  transition:
+    transform 0.15s ease,
+    background-color 0.15s ease;
+}
+
+.pause-content button:hover {
+  background: #a85d1a;
+  transform: scale(1.05);
+}
+
+.pause-content button:active {
+  transform: scale(0.98);
 }

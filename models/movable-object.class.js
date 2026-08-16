@@ -11,7 +11,6 @@ class MovableObject extends DrawableObject {
       if (this.isDead && this.isDead()) {
         return;
       }
-
       if (this.isAboveGround() || this.speedY > 0) {
         this.y -= this.speedY;
         this.speedY -= this.acceleration;
@@ -23,13 +22,11 @@ class MovableObject extends DrawableObject {
     return this.y < 225;
   }
 
-  //character.isColliding(chicken);
-
   isColliding(mo) {
     return (
       this.x + this.width > mo.x &&
       this.y + this.height > mo.y &&
-      this.x < mo.x &&
+      this.x < mo.x + mo.width &&
       this.y < mo.y + mo.height
     );
   }

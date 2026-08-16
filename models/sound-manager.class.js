@@ -7,6 +7,7 @@ class SoundManager {
     chickenDeath: new Audio("audio/chicken_death.mp3"),
     pepeHurt: new Audio("audio/pepe_hurt.mp3"),
     pepeDeath: new Audio("audio/pepe_death.mp3"),
+    pepeSnore: new Audio("audio/pepe_snore.mp3"),
     bossAlert: new Audio("audio/boss_alert.mp3"),
     bossAttack: new Audio("audio/boss_attack.mp3"),
     bossHurt: new Audio("audio/boss_hurt.mp3"),
@@ -24,6 +25,7 @@ class SoundManager {
     chickenDeath: 1.0,
     pepeHurt: 1.0,
     pepeDeath: 1.0,
+    pepeSnore: 0.7,
     bossAlert: 0.9,
     bossAttack: 1.0,
     bossHurt: 0.9,
@@ -38,6 +40,7 @@ class SoundManager {
   constructor() {
     const savedMusicVolume = localStorage.getItem("musicVolume");
     const savedEffectsVolume = localStorage.getItem("effectsVolume");
+    const savedMuteState = localStorage.getItem("isMuted");
 
     if (savedMusicVolume !== null) {
       this.musicVolume = Number(savedMusicVolume);
@@ -47,7 +50,17 @@ class SoundManager {
       this.effectsVolume = Number(savedEffectsVolume);
     }
 
+    if (savedMuteState !== null) {
+      this.isMuted = savedMuteState === "true";
+    }
+
     this.setMusicVolume(this.musicVolume);
+
+    if (this.isMuted) {
+      Object.values(this.sounds).forEach((sound) => {
+        sound.volume = 0;
+      });
+    }
   }
 
   play(soundName) {
@@ -67,15 +80,16 @@ class SoundManager {
 
   playMusic() {
     const music = this.sounds.backgroundMusic;
-
+    if (this.isMuted || this.musicVolume === 0) {
+      music.pause();
+      music.volume = 0;
+      return;
+    }
     music.volume = this.musicVolume;
-
     if (!music.paused) {
       return;
     }
-
     music.play();
-
     music.ontimeupdate = () => {
       if (music.duration && music.currentTime >= music.duration - 2) {
         music.currentTime = 0;
@@ -85,19 +99,29 @@ class SoundManager {
 
   toggleMute() {
     this.isMuted = !this.isMuted;
+
+    localStorage.setItem("isMuted", this.isMuted);
+
     if (this.isMuted) {
       Object.values(this.sounds).forEach((sound) => {
         sound.volume = 0;
       });
+
+      this.sounds.backgroundMusic.pause();
     } else {
       this.sounds.backgroundMusic.volume = this.musicVolume;
+
       Object.keys(this.soundVolumes).forEach((soundName) => {
         const sound = this.sounds[soundName];
+
         if (sound) {
           sound.volume = this.soundVolumes[soundName] * this.effectsVolume;
         }
       });
+
+      this.playMusic();
     }
+
     return this.isMuted;
   }
 
@@ -112,10 +136,15 @@ class SoundManager {
   setMusicVolume(volume) {
     this.musicVolume = volume;
     const music = this.sounds.backgroundMusic;
-    music.volume = volume;
-    console.log("Music volume:", volume);
-    console.log("Audio volume:", music.volume);
-
+    if (this.isMuted || volume === 0) {
+      music.volume = 0;
+      music.pause();
+    } else {
+      music.volume = volume;
+      if (music.paused) {
+        music.play();
+      }
+    }
     localStorage.setItem("musicVolume", volume);
   }
 

@@ -10,6 +10,10 @@ class Chicken extends MovableObject {
   collisionOffsetY = 0;
   collisionWidth = 60;
   collisionHeight = 60;
+  attackOffsetX = 10;
+  attackOffsetY = 5;
+  attackWidth = 40;
+  attackHeight = 50;
 
   IMAGES_WALKING = [
     "img/3_enemies_chicken/chicken_normal/1_walk/1_w.png",
@@ -52,6 +56,25 @@ class Chicken extends MovableObject {
       }
       this.playAnimation(this.IMAGES_WALKING);
     }, 200);
+  }
+
+  isCharacterInAttackRange(character) {
+    const attackLeft = this.x + this.attackOffsetX;
+    const attackRight = attackLeft + this.attackWidth;
+    const attackTop = this.y + this.attackOffsetY;
+    const attackBottom = attackTop + this.attackHeight;
+
+    const characterLeft = character.x;
+    const characterRight = character.x + character.width;
+    const characterTop = character.y;
+    const characterBottom = character.y + character.height;
+
+    return (
+      characterRight > attackLeft &&
+      characterLeft < attackRight &&
+      characterBottom > attackTop &&
+      characterTop < attackBottom
+    );
   }
 
   isCollidingWithBottle(bottle) {

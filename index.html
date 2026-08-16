@@ -18,6 +18,7 @@
     <script src="models/movable-object.class.js"></script>
     <script src="models/coin.class.js"></script>
     <script src="models/chicken.class.js"></script>
+    <script src="models/small-chicken.class.js"></script>
     <script src="models/cloud.class.js"></script>
     <script src="models/background-object.class.js"></script>
     <script src="models/bottle.class.js"></script>
@@ -67,265 +68,279 @@
         </button>
       </div>
     </div>
-
-    <div class="game-container">
-      <!-- =========================
+    <div class="content">
+      <div class="game-container">
+        <!-- =========================
            START SCREEN
       ========================== -->
 
-      <div class="start-screen">
-        <h1>El Pollo Loco</h1>
+        <div class="start-screen">
+          <h1>El Pollo Loco</h1>
 
-        <div class="start-menu">
-          <button id="play-button" onclick="startGame()">Play</button>
+          <div class="start-menu">
+            <button id="play-button" onclick="startGame()">Play</button>
 
-          <button class="menu-button" onclick="openShop()">Shop</button>
+            <button class="menu-button" onclick="openShop()">Shop</button>
 
-          <button class="menu-button" onclick="openSettings()">
-            Sound Settings
-          </button>
+            <button class="menu-button" onclick="openSettings()">
+              Sound Settings
+            </button>
 
-          <button class="menu-button" onclick="openControls()">Controls</button>
+            <button class="menu-button" onclick="openControls()">
+              Controls
+            </button>
 
-          <button class="menu-button" onclick="openImpressum()">
-            Impressum
-          </button>
+            <button class="menu-button" onclick="openImpressum()">
+              Impressum
+            </button>
+          </div>
         </div>
-      </div>
 
-      <!-- =========================
+        <!-- =========================
            CANVAS
       ========================== -->
 
-      <canvas id="canvas" width="720" height="480"></canvas>
+        <canvas id="canvas" width="720" height="480"></canvas>
 
-      <!-- =========================
+        <!-- =========================
+           PAUSE SCREEN
+      ========================== -->
+
+        <div id="pause-screen" class="pause-screen d-none">
+          <div class="pause-content">
+            <h2>Game Paused</h2>
+
+            <button onclick="resumeGame()">Continue</button>
+            <button onclick="showMenu()">Exit to Menu</button>
+          </div>
+        </div>
+
+        <!-- =========================
            FULLSCREEN BUTTON
       ========================== -->
 
-      <button
-        id="fullscreen-button"
-        class="fullscreen-button"
-        onclick="toggleFullscreen()"
-        aria-label="Toggle fullscreen"
-      >
-        ⛶
-      </button>
+        <button
+          id="fullscreen-button"
+          class="fullscreen-button"
+          onclick="toggleFullscreen()"
+          aria-label="Toggle fullscreen"
+        >
+          ⛶
+        </button>
 
-      <!-- =========================
+        <!-- =========================
            MUTE BUTTON
       ========================== -->
 
-      <button id="mute-button" onclick="toggleMute()">🔊</button>
+        <button id="mute-button" onclick="toggleMute()">🔊</button>
 
-      <!-- =========================
+        <!-- =========================
      SOUND SETTINGS SCREEN
 ========================== -->
 
-      <div id="settings-screen" class="settings-screen d-none">
-        <h2>Settings</h2>
+        <div id="settings-screen" class="settings-screen d-none">
+          <h2>Settings</h2>
 
-        <div class="settings-content">
-          <div class="setting">
-            <label for="music-volume">Music</label>
+          <div class="settings-content">
+            <div class="setting">
+              <label for="music-volume">Music</label>
 
-            <input
-              id="music-volume"
-              type="range"
-              min="0"
-              max="1"
-              step="0.01"
-              value="0.3"
-            />
+              <input
+                id="music-volume"
+                type="range"
+                min="0"
+                max="1"
+                step="0.01"
+                value="0.3"
+              />
 
-            <span id="music-volume-value">30%</span>
+              <span id="music-volume-value">30%</span>
+            </div>
+
+            <div class="setting">
+              <label for="effects-volume">Effects</label>
+
+              <input
+                id="effects-volume"
+                type="range"
+                min="0"
+                max="1"
+                step="0.01"
+                value="0.9"
+              />
+
+              <span id="effects-volume-value">90%</span>
+            </div>
           </div>
 
-          <div class="setting">
-            <label for="effects-volume">Effects</label>
-
-            <input
-              id="effects-volume"
-              type="range"
-              min="0"
-              max="1"
-              step="0.01"
-              value="0.9"
-            />
-
-            <span id="effects-volume-value">90%</span>
-          </div>
+          <button class="game-over-button" onclick="closeSettings()">
+            Back
+          </button>
         </div>
 
-        <button class="game-over-button" onclick="closeSettings()">Back</button>
-      </div>
-
-      <!-- =========================
+        <!-- =========================
      SHOP SCREEN
 ========================== -->
 
-      <div id="shop-screen" class="shop-screen d-none">
-        <h2>Shop</h2>
-        <div class="shop-balance">
-          <span class="shop-balance-label">Your Coins:</span>
-          <div class="shop-balance-value">
-            <img src="img/7_statusbars/3_icons/icon_coin.png" alt="Coin" />
-            <span id="shop-coin-amount">0</span>
+        <div id="shop-screen" class="shop-screen d-none">
+          <h2>Shop</h2>
+          <div class="shop-balance">
+            <span class="shop-balance-label">Your Coins:</span>
+            <div class="shop-balance-value">
+              <img src="img/7_statusbars/3_icons/icon_coin.png" alt="Coin" />
+              <span id="shop-coin-amount">0</span>
+            </div>
           </div>
+          <div class="shop-content">
+            <div class="shop-item">
+              <h3>1 Bottle</h3>
+              <img
+                class="shop-item-image shop-bottle-image"
+                src="img/7_statusbars/3_icons/icon_salsa_bottle.png"
+                alt="Bottle"
+              />
+              <div class="shop-price">
+                <img src="img/8_coin/coin_1.png" alt="Coin" />
+                <span>3</span>
+              </div>
+              <button>Buy</button>
+            </div>
+            <div class="shop-item">
+              <h3>5 Bottles</h3>
+              <img
+                class="shop-item-image shop-bottle-image"
+                src="img/7_statusbars/3_icons/icon_salsa_bottle.png"
+                alt="Bottles"
+              />
+              <div class="shop-price">
+                <img src="img/8_coin/coin_1.png" alt="Coin" />
+                <span>10</span>
+              </div>
+              <button>Buy</button>
+            </div>
+            <div class="shop-item">
+              <h3>Coin Magnet</h3>
+              <img
+                class="shop-item-image shop-magnet-image"
+                src="assets/image/magnet.png"
+                alt="Coin Magnet"
+              />
+              <div class="shop-price">
+                <img src="img/8_coin/coin_1.png" alt="Coin" />
+                <span>15</span>
+              </div>
+              <button>Buy</button>
+            </div>
+          </div>
+          <button
+            class="game-over-button shop-back-button"
+            onclick="closeShop()"
+          >
+            Back
+          </button>
         </div>
-        <div class="shop-content">
-          <div class="shop-item">
-            <h3>1 Bottle</h3>
-            <img
-              class="shop-item-image shop-bottle-image"
-              src="img/7_statusbars/3_icons/icon_salsa_bottle.png"
-              alt="Bottle"
-            />
-            <div class="shop-price">
-              <img src="img/8_coin/coin_1.png" alt="Coin" />
-              <span>3</span>
-            </div>
-            <button>Buy</button>
-          </div>
-          <div class="shop-item">
-            <h3>5 Bottles</h3>
-            <img
-              class="shop-item-image shop-bottle-image"
-              src="img/7_statusbars/3_icons/icon_salsa_bottle.png"
-              alt="Bottles"
-            />
-            <div class="shop-price">
-              <img src="img/8_coin/coin_1.png" alt="Coin" />
-              <span>10</span>
-            </div>
-            <button>Buy</button>
-          </div>
-          <div class="shop-item">
-            <h3>Coin Magnet</h3>
-            <img
-              class="shop-item-image shop-magnet-image"
-              src="assets/image/magnet.png"
-              alt="Coin Magnet"
-            />
-            <div class="shop-price">
-              <img src="img/8_coin/coin_1.png" alt="Coin" />
-              <span>15</span>
-            </div>
-            <button>Buy</button>
-          </div>
-        </div>
-        <button class="game-over-button shop-back-button" onclick="closeShop()">
-          Back
-        </button>
-      </div>
 
-      <!-- =========================
+        <!-- =========================
            CONTROLS SCREEN
       ========================== -->
 
-      <div id="controls-screen" class="controls-screen d-none">
-        <h2>Controls</h2>
+        <div id="controls-screen" class="controls-screen d-none">
+          <h2>Controls</h2>
 
-        <div class="controls-grid">
-          <div class="key-group">
-            <div class="key">←</div>
-            <div class="key">→</div>
+          <div class="controls-grid">
+            <div class="key-group">
+              <div class="key">←</div>
+              <div class="key">→</div>
+            </div>
+            <span> Move </span>
+
+            <div class="key key-space">SPACE</div>
+            <span> Jump </span>
+
+            <div class="key">D</div>
+            <span> Throw Bottle </span>
+
+            <div class="key">S</div>
+            <span> Shop </span>
           </div>
-          <span> Move </span>
 
-          <div class="key key-space">SPACE</div>
-          <span> Jump </span>
-
-          <div class="key">D</div>
-          <span> Throw Bottle </span>
-
-          <div class="key">S</div>
-          <span> Shop </span>
+          <button class="game-over-button" onclick="closeControls()">
+            Back
+          </button>
         </div>
 
-        <button class="game-over-button" onclick="closeControls()">Back</button>
-      </div>
-
-      <!-- =========================
+        <!-- =========================
            IMPRESSUM SCREEN
       ========================== -->
 
-      <div id="impressum-screen" class="impressum-screen d-none">
-        <h2>Impressum</h2>
+        <div id="impressum-screen" class="impressum-screen d-none">
+          <h2>Impressum</h2>
 
-        <div class="impressum-content">
-          <h3>Angaben gemäß § 5 DDG</h3>
+          <div class="impressum-content">
+            <h3>Angaben gemäß § 5 DDG</h3>
 
-          <p>
-            <strong>Berk Capaci</strong><br />
-            Burgstraße 32<br />
-            59755, Arnsberg<br />
-            Deutschland
-          </p>
+            <h3>Kontakt</h3>
 
-          <h3>Kontakt</h3>
+            <p>
+              E-Mail:
+              <a href="mailto:[berkcapaci@hotmail.com.tr]">
+                berkcapaci@hotmail.com.tr
+              </a>
+            </p>
 
-          <p>
-            E-Mail:
-            <a href="mailto:[berkcapaci@hotmail.com.tr]">
-              berkcapaci@hotmail.com.tr
-            </a>
-          </p>
+            <h3>Projekt</h3>
 
-          <p>Telefon: 015236745853</p>
+            <p>
+              El Pollo Loco ist ein browserbasiertes JavaScript-Spiel, das im
+              Rahmen eines Bildungs- und Portfolio-Projekts entwickelt wurde.
+            </p>
 
-          <h3>Projekt</h3>
+            <p>
+              Das Projekt dient ausschließlich zu Lern- und
+              Demonstrationszwecken und ist nicht als kommerzielles Angebot
+              gedacht.
+            </p>
 
-          <p>
-            El Pollo Loco ist ein browserbasiertes JavaScript-Spiel, das im
-            Rahmen eines Bildungs- und Portfolio-Projekts entwickelt wurde.
-          </p>
+            <h3>Verantwortlich für den Inhalt</h3>
 
-          <p>
-            Das Projekt dient ausschließlich zu Lern- und Demonstrationszwecken
-            und ist nicht als kommerzielles Angebot gedacht.
-          </p>
+            <p>
+              Berk Capaci<br />
+              Arnsberg
+            </p>
+          </div>
 
-          <h3>Verantwortlich für den Inhalt</h3>
-
-          <p>
-            Berk Capaci<br />
-            Burgstraße 32<br />
-            59755, Arnsberg
-          </p>
+          <button class="game-over-button" onclick="closeImpressum()">
+            Back
+          </button>
         </div>
 
-        <button class="game-over-button" onclick="closeImpressum()">
-          Back
-        </button>
-      </div>
-
-      <!-- =========================
+        <!-- =========================
            WIN SCREEN
       ========================== -->
 
-      <div id="win-screen" class="win-screen d-none">
-        <h1>You Win!</h1>
+        <div id="win-screen" class="win-screen d-none">
+          <h1>You Win!</h1>
 
-        <button class="game-over-button" onclick="restartGame()">
-          Play Again
-        </button>
+          <button class="game-over-button" onclick="restartGame()">
+            Play Again
+          </button>
 
-        <button class="game-over-button" onclick="showMenu()">Menu</button>
-      </div>
+          <button class="game-over-button" onclick="showMenu()">Menu</button>
+        </div>
 
-      <!-- =========================
+        <!-- =========================
            LOSE SCREEN
       ========================== -->
 
-      <div id="lose-screen" class="lose-screen d-none">
-        <h1>You Lost</h1>
+        <div id="lose-screen" class="lose-screen d-none">
+          <h1>You Lost</h1>
 
-        <button class="game-over-button" onclick="restartGame()">
-          Play Again
-        </button>
+          <button class="game-over-button" onclick="restartGame()">
+            Play Again
+          </button>
 
-        <button class="game-over-button" onclick="showMenu()">Menu</button>
+          <button class="game-over-button" onclick="showMenu()">Menu</button>
+        </div>
       </div>
     </div>
   </body>

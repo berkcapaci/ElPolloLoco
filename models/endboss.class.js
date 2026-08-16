@@ -21,6 +21,8 @@ class Endboss extends MovableObject {
   attackHitFrame = 4;
   isFrozen = false;
   deathSoundPlayed = false;
+  smallChickenCooldown = false;
+  smallChickenInterval = 5000;
 
   IMAGES_WALKING = [
     "img/4_enemie_boss_chicken/1_walk/G1.png",
@@ -194,6 +196,7 @@ class Endboss extends MovableObject {
     this.currentState = "ATTACK";
     this.currentImage = 0;
     this.world.soundManager.play("bossAttack");
+    this.spawnSmallChicken();
     const attackFrameTime = this.attackHitFrame * 200;
     setTimeout(() => {
       if (!this.isEndbossDead) {
@@ -210,6 +213,19 @@ class Endboss extends MovableObject {
       },
       this.IMAGES_ATTACK.length * 200 + 300,
     );
+  }
+
+  spawnSmallChicken() {
+    if (this.smallChickenCooldown || this.isEndbossDead) {
+      return;
+    }
+    this.smallChickenCooldown = true;
+    const smallChicken = new SmallChicken(this.x - 50);
+    smallChicken.world = this.world;
+    this.world.level.enemies.push(smallChicken);
+    setTimeout(() => {
+      this.smallChickenCooldown = false;
+    }, this.smallChickenInterval);
   }
 
   dealAttackDamage() {

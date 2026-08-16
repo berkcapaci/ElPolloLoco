@@ -25,7 +25,7 @@ class World {
   isStopped = false;
   soundManager;
 
-  constructor(canvas, keyboard) {
+  constructor(canvas, keyboard, soundManager) {
     this.canvas = canvas;
     this.ctx = canvas.getContext("2d");
     this.keyboard = keyboard;
@@ -39,7 +39,7 @@ class World {
     this.coinCounter = new CoinCounter();
     this.bottleCounter = new BottleCounter();
     this.endbossBar = new EndbossBar();
-    this.soundManager = new SoundManager();
+    this.soundManager = soundManager || new SoundManager();
     this.draw();
     this.setWorld();
     this.run();
@@ -78,9 +78,7 @@ class World {
     clearTimeout(this.winScreenTimeout);
 
     this.level.enemies.forEach((enemy) => {
-      if (enemy instanceof Endboss || enemy instanceof Chicken) {
-        enemy.isFrozen = true;
-      }
+      enemy.isFrozen = true;
     });
   }
 
@@ -88,9 +86,7 @@ class World {
     this.isStopped = false;
 
     this.level.enemies.forEach((enemy) => {
-      if (enemy instanceof Endboss || enemy instanceof Chicken) {
-        enemy.isFrozen = false;
-      }
+      enemy.isFrozen = false;
     });
 
     this.draw();
@@ -102,12 +98,16 @@ class World {
       if (enemy.isChickenDead || enemy.isEndbossDead) {
         return;
       }
-
-      if (this.character.isColliding(enemy)) {
+      let isColliding = false;
+      if (enemy instanceof Chicken) {
+        isColliding = enemy.isCharacterInAttackRange(this.character);
+      } else {
+        isColliding = this.character.isColliding(enemy);
+      }
+      if (isColliding) {
         if (this.character.isHurt()) {
           return;
         }
-
         this.character.hit();
         this.statusBar.setPercentage(this.character.energy);
       }
@@ -115,10 +115,9 @@ class World {
   }
 
   checkCoinCollisions() {
-    let availableCoins = this.level.coins;
-    let collectedCoinIndex = availableCoins.findIndex((currentCoin) => {
-      return this.character.isColliding(currentCoin);
-      // (currentCoin) => this.character.isColliding(currentCoin) we can write it like this as well.
+    const availableCoins = this.level.coins;
+    const collectedCoinIndex = availableCoins.findIndex((coin) => {
+      return this.character.isCharacterCollectionCoin(coin);
     });
     if (collectedCoinIndex !== -1) {
       availableCoins.splice(collectedCoinIndex, 1);
