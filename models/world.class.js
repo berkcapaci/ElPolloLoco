@@ -141,7 +141,7 @@ class World {
   checkCoinCollisions() {
     const availableCoins = this.level.coins;
     const collectedCoinIndex = availableCoins.findIndex((coin) => {
-      return this.character.isCharacterCollectionCoin(coin);
+      return this.character.isColliding(coin);
     });
     if (collectedCoinIndex !== -1) {
       availableCoins.splice(collectedCoinIndex, 1);
@@ -236,27 +236,42 @@ class World {
     if (!endboss) {
       return false;
     }
-    return this.character.x + this.character.width >= endboss.x - 20;
+    const endbossLeft = endboss.x + endboss.offset.left;
+    return this.character.x + this.character.width >= endbossLeft;
   }
 
   /** Draws the complete game world and HUD. */
   draw() {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
     this.ctx.translate(this.camera_x, 0);
+
     this.addObjectToMap(this.level.backgroundObjects);
     this.addObjectToMap(this.level.clouds);
-    this.addObjectToMap(this.level.enemies);
-    this.addObjectToMap(this.throwableObjects);
+
+    // Collectible objects behind enemies
     this.addObjectToMap(this.level.coins);
     this.addObjectToMap(this.level.bottles);
+
+    // Throwable bottles behind enemies
+    this.addObjectToMap(this.throwableObjects);
+
+    // Enemies in front of bottles
+    this.addObjectToMap(this.level.enemies);
+
+    // Character in front of enemies
     this.addToMap(this.character);
+
     this.ctx.translate(-this.camera_x, 0);
+
     this.addToMap(this.statusBar);
     this.addToMap(this.coinCounter);
     this.addToMap(this.bottleCounter);
+
     if (this.isEndbossVisible()) {
       this.endbossBar.draw(this.ctx);
     }
+
     this.animationFrameId = requestAnimationFrame(() => {
       if (!this.isStopped) {
         this.draw();

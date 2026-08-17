@@ -10,6 +10,12 @@ class Endboss extends MovableObject {
   width = 350;
   y = 100;
   energy = 400;
+  offset = {
+    top: 100,
+    bottom: 100,
+    left: 100,
+    right: 100,
+  };
 
   collisionOffsetX = 60;
   collisionOffsetY = 40;
@@ -22,11 +28,11 @@ class Endboss extends MovableObject {
   currentState = "WALK";
 
   alertDistance = 800;
-  attackDistance = 250;
+  attackDistance = 50;
 
   startX = 5050;
   returnDistance = 900;
-  bossSpeed = 3;
+  bossSpeed = 5;
 
   alertFinished = false;
   attackCooldown = false;
@@ -327,7 +333,7 @@ class Endboss extends MovableObject {
 
     this.smallChickenCooldown = true;
 
-    const smallChicken = new SmallChicken(this.x - 50);
+    const smallChicken = new SmallChicken(this.x - 10);
 
     smallChicken.world = this.world;
     this.world.level.enemies.push(smallChicken);
@@ -345,15 +351,8 @@ class Endboss extends MovableObject {
     if (this.attackHit || !this.world || this.isFrozen) {
       return;
     }
-
     const character = this.world.character;
-    const attackDistance = 180;
-
-    const bossLeft = this.x;
-    const characterRight = character.x + character.width;
-    const distance = bossLeft - characterRight;
-
-    if (distance <= attackDistance && distance >= -character.width) {
+    if (this.isColliding(character)) {
       character.hit();
       this.world.statusBar.setPercentage(character.energy);
       this.attackHit = true;

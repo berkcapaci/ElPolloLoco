@@ -82,10 +82,12 @@ class Chicken extends MovableObject {
     const attackTop = this.y + this.attackOffsetY;
     const attackBottom = attackTop + this.attackHeight;
 
-    const characterLeft = character.x;
-    const characterRight = character.x + character.width;
-    const characterTop = character.y;
-    const characterBottom = character.y + character.height;
+    const characterLeft = character.x + character.offset.left;
+    const characterRight =
+      character.x + character.width - character.offset.right;
+    const characterTop = character.y + character.offset.top;
+    const characterBottom =
+      character.y + character.height - character.offset.bottom;
 
     return (
       characterRight > attackLeft &&

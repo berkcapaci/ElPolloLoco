@@ -1,6 +1,7 @@
 /* =========================
-SHOP SCREEN
+   SHOP SCREEN
 ========================= */
+
 .shop-screen {
   position: absolute;
   inset: 0;
@@ -13,6 +14,10 @@ SHOP SCREEN
   border-radius: 16px;
   z-index: 20;
 }
+
+/* =========================
+   SHOP TITLE
+========================= */
 
 .shop-screen h2 {
   margin: 0;
@@ -27,9 +32,12 @@ SHOP SCREEN
     0 6px 12px rgba(0, 0, 0, 0.6);
 }
 
+/* =========================
+   SHOP BALANCE
+========================= */
+
 .shop-balance {
   display: flex;
-  flex-direction: row;
   align-items: center;
   justify-content: center;
   gap: 8px;
@@ -60,9 +68,12 @@ SHOP SCREEN
   color: #f6c453;
 }
 
+/* =========================
+   SHOP CONTENT
+========================= */
+
 .shop-content {
   display: flex;
-  flex-direction: row;
   justify-content: center;
   align-items: stretch;
   gap: 14px;
@@ -90,6 +101,10 @@ SHOP SCREEN
   color: white;
 }
 
+/* =========================
+   SHOP IMAGES
+========================= */
+
 .shop-item-image {
   object-fit: contain;
 }
@@ -103,6 +118,10 @@ SHOP SCREEN
   width: 65px;
   height: 65px;
 }
+
+/* =========================
+   SHOP PRICE
+========================= */
 
 .shop-price {
   display: flex;
@@ -121,6 +140,10 @@ SHOP SCREEN
   height: 90px;
   object-fit: contain;
 }
+
+/* =========================
+   SHOP BUTTON
+========================= */
 
 .shop-item button {
   width: 100%;
@@ -151,7 +174,7 @@ SHOP SCREEN
 }
 
 .coming-soon {
+  margin-top: 8px;
   font-size: 14px;
   font-weight: bold;
-  margin-top: 8px;
 }

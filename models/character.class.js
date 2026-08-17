@@ -22,6 +22,13 @@ class Character extends MovableObject {
   idleTime = 0;
   idleThreshold = 15000;
   isSnoring = false;
+  isJumping = false;
+  offset = {
+    top: 50,
+    bottom: 20,
+    left: 20,
+    right: 20,
+  };
 
   /**
    * Idle animation images.
@@ -226,6 +233,14 @@ class Character extends MovableObject {
       this.playAnimation(this.IMAGES_JUMPING);
       return;
     }
+    if (this.isJumping) {
+      this.isJumping = false;
+
+      const firstJumpImage = this.IMAGES_JUMPING[0];
+      this.img = this.imageCache[firstJumpImage];
+
+      return;
+    }
     if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
       this.playAnimation(this.IMAGES_WALKING);
       return;
@@ -247,23 +262,18 @@ class Character extends MovableObject {
    * @param {Coin} coin - The coin to check for collision.
    * @returns {boolean} Whether the character collects the coin.
    */
-  isCharacterCollectionCoin(coin) {
-    const characterLeft = this.x;
-    const characterRight = this.x + this.width;
-    const characterTop = this.y + 70;
-    const characterBottom = this.y + this.height;
-    const coinLeft = coin.x + 20;
-    const coinRight = coin.x + coin.width - 20;
-    const coinTop = coin.y + 20;
-    const coinBottom = coin.y + coin.height - 20;
-    return (
-      characterRight > coinLeft &&
-      characterLeft < coinRight &&
-      characterBottom > coinTop &&
-      characterTop < coinBottom
-    );
-  }
+  checkCoinCollisions() {
+    const availableCoins = this.level.coins;
+    const collectedCoinIndex = availableCoins.findIndex((coin) => {
+      return this.character.isColliding(coin);
+    });
 
+    if (collectedCoinIndex !== -1) {
+      availableCoins.splice(collectedCoinIndex, 1);
+      this.character.collectedCoins++;
+      this.coinCounter.currentCoinAmount = this.character.collectedCoins;
+    }
+  }
   /**
    * Plays the character death animation frame by frame.
    */
@@ -383,5 +393,9 @@ class Character extends MovableObject {
    */
   jump() {
     this.speedY = 30;
+    this.isJumping = true;
+    this.currentImage = 0;
+    const firstJumpImage = this.IMAGES_JUMPING[0];
+    this.img = this.imageCache[firstJumpImage];
   }
 }

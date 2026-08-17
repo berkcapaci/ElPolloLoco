@@ -3,5 +3,86 @@
 ========================= */
 
 canvas {
-    display: none;
+  display: none;
+  background-color: black;
+}
+
+/* =========================
+   GAME CONTAINER
+========================= */
+
+.game-container {
+  position: relative;
+  width: 720px;
+  height: 480px;
+}
+
+/* =========================
+   MUTE BUTTON
+========================= */
+
+#mute-button {
+  position: absolute;
+  left: 5px;
+  bottom: 5px;
+  width: 42px;
+  height: 42px;
+  border: 2px solid #5b2f0d;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.55);
+  font-size: 22px;
+  cursor: pointer;
+  z-index: 15;
+}
+
+/* =========================
+   FULLSCREEN BUTTON
+========================= */
+
+.fullscreen-button {
+  position: absolute;
+  right: 5px;
+  bottom: 5px;
+  width: 42px;
+  height: 42px;
+  border: none;
+  border-radius: 8px;
+  background-color: rgba(0, 0, 0, 0.6);
+  color: white;
+  font-size: 22px;
+  cursor: pointer;
+  z-index: 20;
+}
+
+.fullscreen-button:hover {
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+/* =========================
+   FULLSCREEN GAME
+========================= */
+
+.game-container:fullscreen {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: black;
+}
+
+.game-container:fullscreen canvas {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.game-container:fullscreen .start-screen:not(.d-none) {
+  width: 100%;
+  height: 100%;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
