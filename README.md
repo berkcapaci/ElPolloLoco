@@ -392,7 +392,3 @@ Canvas resolution: **720 × 480**
 ## Credits
 
 Game project developed by **Berk Capaci**, created as part of a JavaScript and Object-Oriented Programming learning journey. Intended as a learning and portfolio project.
-
-## License
-
-No license file is currently included in this repository. Add a `LICENSE` file (for example MIT) if you want to define reuse terms for this project.
