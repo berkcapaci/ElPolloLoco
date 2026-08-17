@@ -107,7 +107,7 @@ class SoundManager {
   play(soundName) {
     const sound = this.sounds[soundName];
     if (!sound) {
-      return null;
+      return;
     }
     sound.currentTime = 0;
     const soundVolume = this.soundVolumes[soundName] ?? 1.0;
@@ -116,8 +116,10 @@ class SoundManager {
     } else {
       sound.volume = soundVolume * this.effectsVolume;
     }
-    sound.play();
-    return sound;
+    const playPromise = sound.play();
+    if (playPromise !== undefined) {
+      playPromise.catch(() => {});
+    }
   }
 
   /**
@@ -142,21 +144,19 @@ class SoundManager {
    */
   playMusic() {
     const music = this.sounds.backgroundMusic;
-
     if (this.isMuted || this.musicVolume === 0) {
       music.pause();
       music.volume = 0;
       return;
     }
-
     music.volume = this.musicVolume;
-
     if (!music.paused) {
       return;
     }
-
-    music.play();
-
+    const playPromise = music.play();
+    if (playPromise !== undefined) {
+      playPromise.catch(() => {});
+    }
     music.ontimeupdate = () => {
       if (music.duration && music.currentTime >= music.duration - 2) {
         music.currentTime = 0;
@@ -215,20 +215,19 @@ class SoundManager {
    */
   setMusicVolume(volume) {
     this.musicVolume = volume;
-
     const music = this.sounds.backgroundMusic;
-
     if (this.isMuted || volume === 0) {
       music.volume = 0;
       music.pause();
     } else {
       music.volume = volume;
-
       if (music.paused) {
-        music.play();
+        const playPromise = music.play();
+        if (playPromise !== undefined) {
+          playPromise.catch(() => {});
+        }
       }
     }
-
     localStorage.setItem("musicVolume", volume);
   }
 
