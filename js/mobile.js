@@ -4,52 +4,131 @@
 function toggleFullscreen() {
   const gameContainer = document.querySelector(".game-container");
 
-  if (!document.fullscreenElement) {
-    gameContainer.requestFullscreen();
+  if (!gameContainer) {
     return;
   }
 
-  document.exitFullscreen();
+  if (!document.fullscreenElement) {
+    gameContainer.requestFullscreen().catch(() => {});
+    return;
+  }
+
+  document.exitFullscreen().catch(() => {});
 }
 
 /**
- * Checks whether the device is mobile and updates the orientation screen.
+ * Checks whether the current device is a mobile device.
+ *
+ * @returns {boolean} True if the device is mobile or tablet.
+ */
+function isMobileDevice() {
+  return /Android|iPhone|iPad|iPod|Windows Phone|Pixel /i.test(
+    navigator.userAgent,
+  );
+}
+
+/**
+ * Checks the current screen orientation and updates the UI.
  */
 function checkScreenOrientation() {
   const rotateScreen = document.getElementById("rotate-screen");
+  const mobileControls = document.getElementById("mobile-controls");
 
-  if (!rotateScreen) {
+  if (!rotateScreen || !mobileControls) {
     return;
   }
 
-  const isMobileDevice = /Android|iPhone|iPad|iPod|Windows Phone|Pixel /i.test(
-    navigator.userAgent,
-  );
-
-  if (!isMobileDevice) {
-    rotateScreen.classList.add("d-none");
+  if (!isMobileDevice()) {
+    hideRotateScreen(rotateScreen);
     return;
   }
 
   updateOrientationScreen(rotateScreen);
+  updateMobileControlsVisibility(mobileControls);
 }
 
 /**
- * Shows or hides the rotate screen depending on the device orientation.
+ * Shows or hides the rotate screen.
+ *
+ * Phones require landscape orientation.
+ * Tablets can be used in both orientations.
  *
  * @param {HTMLElement} rotateScreen - The rotate screen element.
  */
 function updateOrientationScreen(rotateScreen) {
-  if (window.innerHeight > window.innerWidth) {
+  const isPhone = isPhoneDevice();
+
+  if (isPhone && window.innerHeight > window.innerWidth) {
     rotateScreen.classList.remove("d-none");
     return;
   }
 
+  hideRotateScreen(rotateScreen);
+}
+
+/**
+ * Hides the rotate screen.
+ *
+ * @param {HTMLElement} rotateScreen - The rotate screen element.
+ */
+function hideRotateScreen(rotateScreen) {
   rotateScreen.classList.add("d-none");
 }
 
 /**
- * Initializes all mobile game controls and maps them to keyboard actions.
+ * Checks whether the current device is a phone.
+ *
+ * @returns {boolean} True if the device is a phone.
+ */
+function isPhoneDevice() {
+  return /iPhone|iPod|Android.*Mobile|Windows Phone|Pixel /i.test(
+    navigator.userAgent,
+  );
+}
+
+/**
+ * Updates the visibility of the mobile controls.
+ *
+ * Controls are only visible while the actual game is active.
+ *
+ * @param {HTMLElement} mobileControls - The mobile controls container.
+ */
+function updateMobileControlsVisibility(mobileControls) {
+  const canvas = document.getElementById("canvas");
+  const shopScreen = document.getElementById("shop-screen");
+  const pauseScreen = document.getElementById("pause-screen");
+  const startScreen = document.querySelector(".start-screen");
+
+  if (!isMobileDevice()) {
+    mobileControls.classList.remove("active");
+    return;
+  }
+
+  if (!canvas || canvas.style.display !== "block") {
+    mobileControls.classList.remove("active");
+    return;
+  }
+
+  if (startScreen && !startScreen.classList.contains("d-none")) {
+    mobileControls.classList.remove("active");
+    return;
+  }
+
+  if (shopScreen && !shopScreen.classList.contains("d-none")) {
+    mobileControls.classList.remove("active");
+    return;
+  }
+
+  if (pauseScreen && !pauseScreen.classList.contains("d-none")) {
+    mobileControls.classList.remove("active");
+    return;
+  }
+
+  mobileControls.classList.add("active");
+}
+
+/**
+ * Initializes all mobile game controls.
  */
 function setupMobileControls() {
   const mobileControls = document.getElementById("mobile-controls");
@@ -71,6 +150,8 @@ function setupMobileControls() {
 
   setupMobileMenuButton("mobile-shop", toggleShop);
   setupMobileMenuButton("mobile-pause", togglePause);
+
+  updateMobileControlsVisibility(mobileControls);
 }
 
 /**
@@ -89,12 +170,14 @@ function setupMobileButton(buttonId, key) {
   button.addEventListener("pointerdown", (event) => {
     event.preventDefault();
     event.stopPropagation();
+
     keyboard[key] = true;
   });
 
   button.addEventListener("pointerup", (event) => {
     event.preventDefault();
     event.stopPropagation();
+
     keyboard[key] = false;
   });
 
@@ -112,7 +195,7 @@ function setupMobileButton(buttonId, key) {
 }
 
 /**
- * Sets up a mobile button that triggers a menu action.
+ * Sets up a mobile menu button.
  *
  * @param {string} buttonId - The button ID.
  * @param {Function} action - The menu action.
@@ -127,7 +210,14 @@ function setupMobileMenuButton(buttonId, action) {
   button.addEventListener("click", (event) => {
     event.preventDefault();
     event.stopPropagation();
+
     action();
+
+    const mobileControls = document.getElementById("mobile-controls");
+
+    if (mobileControls) {
+      updateMobileControlsVisibility(mobileControls);
+    }
   });
 
   button.addEventListener("contextmenu", (event) => {
@@ -142,7 +232,23 @@ function handleOrientationChange() {
   checkScreenOrientation();
 }
 
+/**
+ * Updates mobile controls after entering or leaving fullscreen.
+ */
+function handleFullscreenChange() {
+  checkScreenOrientation();
+
+  const mobileControls = document.getElementById("mobile-controls");
+
+  if (mobileControls) {
+    updateMobileControlsVisibility(mobileControls);
+  }
+}
+
 window.addEventListener("load", checkScreenOrientation);
+window.addEventListener("load", setupMobileControls);
+
 window.addEventListener("resize", checkScreenOrientation);
 window.addEventListener("orientationchange", handleOrientationChange);
-window.addEventListener("load", setupMobileControls);
+
+document.addEventListener("fullscreenchange", handleFullscreenChange);

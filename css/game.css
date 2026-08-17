@@ -86,3 +86,38 @@ canvas {
   justify-content: center;
   align-items: center;
 }
+
+/* =========================
+   TOUCH DEVICE GAME
+========================= */
+
+@media (hover: none) and (pointer: coarse) {
+  .game-container {
+    width: min(100vw, calc(100dvh * 1.5));
+    height: auto;
+    aspect-ratio: 3 / 2;
+    margin: 0 auto;
+  }
+
+  .game-container canvas {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+/* =========================
+   TOUCH DEVICE FULLSCREEN
+========================= */
+
+@media (hover: none) and (pointer: coarse) {
+  .game-container:fullscreen {
+    width: 100vw;
+    height: 100vh;
+  }
+
+  .game-container:fullscreen canvas {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+}

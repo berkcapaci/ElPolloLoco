@@ -8,8 +8,12 @@ let shopOpenedFromGame = false;
  */
 function openShop() {
   const canvas = document.getElementById("canvas");
+  const pauseScreen = document.getElementById("pause-screen");
+  if (pauseScreen && !pauseScreen.classList.contains("d-none")) {
+    return;
+  }
   shopOpenedFromGame = !!world && canvas && canvas.style.display === "block";
-
+  shopOpenedFromPausedGame = false;
   freezeGameForShop();
   hideStartScreen();
   showShopScreen();
@@ -110,12 +114,11 @@ function updateCounters() {
  */
 function closeShop() {
   document.getElementById("shop-screen").classList.add("d-none");
-
+  document.body.classList.remove("shop-open");
   if (shopOpenedFromGame && world) {
     resumeGameAfterShop();
     return;
   }
-
   showStartScreenAfterShop();
 }
 

@@ -1,40 +1,32 @@
 /* =========================================================
-   MOBILE LANDSCAPE
-   1024px AND BELOW
+   TOUCH DEVICES
+   MOBILE + TABLET
 ========================================================= */
 
-@media (max-width: 1024px) and (orientation: landscape) {
-  .game-container {
-    width: min(100vw, calc(100dvh * 1.5));
-    height: auto;
-    aspect-ratio: 3 / 2;
-    margin: 0 auto;
-  }
-
-  .game-container canvas {
-    width: 100%;
-    height: 100%;
-  }
-
-  .start-screen,
-  .win-screen,
-  .lose-screen,
-  .settings-screen,
-  .controls-screen,
-  .impressum-screen,
-  .shop-screen,
-  .pause-screen {
-    width: 100%;
-    height: 100%;
-  }
-
-  /* =========================
+@media (hover: none) and (pointer: coarse) {
+  /* =======================================================
      MOBILE CONTROLS
-  ========================= */
+  ======================================================= */
+
+  .mobile-controls {
+    position: fixed;
+    inset: 0;
+    display: none !important;
+    pointer-events: none;
+    z-index: 9998;
+  }
 
   .mobile-controls.active {
     display: block !important;
     pointer-events: none;
+  }
+
+  .mobile-movement-controls,
+  .mobile-action-controls,
+  .mobile-menu-controls {
+    position: absolute;
+    display: flex;
+    pointer-events: auto;
   }
 
   .mobile-movement-controls,
@@ -62,12 +54,32 @@
   .mobile-control-button {
     width: clamp(40px, 10vh, 58px);
     height: clamp(40px, 10vh, 58px);
+
+    border: 2px solid white;
+    border-radius: 50%;
+
+    background: rgba(0, 0, 0, 0.55);
+
+    color: white;
+
     font-size: clamp(16px, 4vh, 24px);
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    user-select: none;
+    -webkit-user-select: none;
+
+    touch-action: none;
   }
 
   .mobile-control-button img {
     width: clamp(34px, 8vh, 52px);
     height: clamp(34px, 8vh, 52px);
+
+    object-fit: contain;
+    pointer-events: none;
   }
 
   #mobile-jump {
@@ -78,30 +90,72 @@
   #mobile-pause {
     width: clamp(34px, 9vh, 42px);
     height: clamp(34px, 9vh, 42px);
+
     font-size: clamp(14px, 3vh, 18px);
   }
 
-  /* =========================
-     GAME BUTTONS
-  ========================= */
+  /* =======================================================
+     GAME CONTAINER
+  ======================================================= */
+
+  .game-container {
+    width: min(100vw, calc(100dvh * 1.5));
+    height: auto;
+
+    aspect-ratio: 3 / 2;
+
+    margin: 0 auto;
+  }
+
+  .game-container canvas {
+    width: 100%;
+    height: 100%;
+  }
+
+  /* =======================================================
+     GAME SCREENS
+  ======================================================= */
+
+  .start-screen,
+  .win-screen,
+  .lose-screen,
+  .settings-screen,
+  .controls-screen,
+  .impressum-screen,
+  .shop-screen,
+  .pause-screen {
+    width: 100%;
+    height: 100%;
+  }
+
+  /* =======================================================
+     MUTE + FULLSCREEN
+  ======================================================= */
 
   #mute-button,
   .fullscreen-button {
     position: absolute;
-    bottom: 3px;
-    width: 30px;
-    height: 30px;
-    z-index: 20;
+
+    bottom: 5px;
+
+    width: 32px;
+    height: 32px;
+
+    z-index: 30;
   }
 
   #mute-button {
     left: 50%;
     right: auto;
+
+    transform: translateX(-38px);
+
     padding: 0;
-    transform: translateX(-17px);
+
     display: flex;
     justify-content: center;
     align-items: center;
+
     font-size: 15px;
     line-height: 1;
   }
@@ -109,43 +163,160 @@
   .fullscreen-button {
     left: 50%;
     right: auto;
-    transform: translateX(17px);
+
+    transform: translateX(6px);
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
     font-size: 15px;
+    line-height: 1;
   }
 
-  /* =========================
+  /* =======================================================
      SHOP
-  ========================= */
+  ======================================================= */
 
-  .shop-content {
+  .shop-screen {
     width: 100%;
-    gap: clamp(5px, 1.5vw, 14px);
-  }
+    height: 100%;
 
-  .shop-item {
-    width: clamp(100px, 20vw, 145px);
-    min-height: clamp(125px, 30vh, 165px);
-    padding: 5px;
-    gap: 2px;
+    padding: clamp(8px, 2vh, 20px);
+
+    gap: clamp(4px, 1vh, 10px);
+
+    overflow: hidden;
   }
 
   .shop-screen h2 {
-    font-size: clamp(28px, 6vw, 54px);
+    flex-shrink: 0;
+
+    margin: 0;
+
+    font-size: clamp(24px, 6vw, 54px);
+
+    line-height: 1;
+  }
+
+  .shop-balance {
+    flex-shrink: 0;
+
+    gap: clamp(4px, 1vw, 8px);
+  }
+
+  .shop-balance-label {
+    font-size: clamp(10px, 2vw, 14px);
+  }
+
+  .shop-balance-value {
+    gap: 3px;
+  }
+
+  .shop-balance-value img {
+    width: clamp(28px, 7vw, 50px);
+    height: clamp(28px, 7vw, 50px);
+  }
+
+  .shop-balance-value span {
+    font-size: clamp(14px, 3vw, 22px);
+  }
+
+  .shop-content {
+    width: 100%;
+    max-width: 650px;
+
+    display: flex;
+
+    justify-content: center;
+    align-items: stretch;
+
+    gap: clamp(4px, 1.5vw, 14px);
+
+    min-width: 0;
+  }
+
+  .shop-item {
+    width: clamp(82px, 20vw, 145px);
+
+    min-width: 0;
+
+    min-height: clamp(105px, 30vh, 165px);
+
+    padding: clamp(3px, 1vw, 8px);
+
+    gap: 2px;
+
+    border-width: 2px;
+    border-radius: 10px;
+
+    overflow: hidden;
+  }
+
+  .shop-item h3 {
+    width: 100%;
+
+    margin: 0;
+
+    font-size: clamp(10px, 2.4vw, 17px);
+
+    line-height: 1.1;
+
+    overflow-wrap: break-word;
   }
 
   .shop-bottle-image {
-    width: clamp(42px, 8vw, 70px);
-    height: clamp(42px, 8vw, 70px);
+    width: clamp(32px, 8vw, 70px);
+    height: clamp(32px, 8vw, 70px);
   }
 
   .shop-magnet-image {
-    width: clamp(40px, 7vw, 65px);
-    height: clamp(40px, 7vw, 65px);
+    width: clamp(30px, 7vw, 65px);
+    height: clamp(30px, 7vw, 65px);
   }
 
-  /* =========================
+  .shop-price {
+    gap: 2px;
+
+    margin-bottom: 2px;
+
+    font-size: clamp(10px, 2vw, 15px);
+  }
+
+  .shop-price img {
+    width: clamp(24px, 6vw, 50px);
+    height: clamp(24px, 6vw, 50px);
+  }
+
+  .shop-item button {
+    width: 100%;
+
+    padding: clamp(3px, 1vw, 6px);
+
+    font-size: clamp(10px, 2vw, 15px);
+
+    border-width: 1px;
+  }
+
+  .coming-soon {
+    margin-top: 3px;
+
+    font-size: clamp(8px, 1.8vw, 14px);
+  }
+
+  .shop-back-button {
+    flex-shrink: 0;
+
+    margin-top: 2px;
+
+    padding: clamp(4px, 1vw, 8px) clamp(12px, 3vw, 20px);
+
+    font-size: clamp(11px, 2vw, 16px);
+  }
+
+  /* =======================================================
      START / GAME OVER
-  ========================= */
+  ======================================================= */
 
   .start-screen h1 {
     font-size: clamp(32px, 6vw, 48px);
@@ -155,522 +326,456 @@
   .win-screen button,
   .lose-screen button {
     font-size: clamp(14px, 2vw, 18px);
+
     padding: clamp(6px, 1vw, 12px) clamp(12px, 2vw, 24px);
   }
+}
 
-  /* =========================
-     COMMON SCREENS
-  ========================= */
+/* =========================================================
+   TOUCH DEVICES
+   PORTRAIT
+========================================================= */
+
+@media (hover: none) and (pointer: coarse) and (orientation: portrait) {
+  .mobile-controls.active {
+    display: block !important;
+  }
+
+  .mobile-control-button {
+    width: clamp(40px, 12vw, 58px);
+    height: clamp(40px, 12vw, 58px);
+  }
+
+  .mobile-menu-controls {
+    top: clamp(8px, 2vh, 16px);
+  }
+
+  #mute-button,
+  .fullscreen-button {
+    left: 50%;
+    right: auto;
+
+    bottom: 5px;
+  }
+
+  #mute-button {
+    transform: translateX(-38px);
+  }
+
+  .fullscreen-button {
+    transform: translateX(6px);
+  }
+}
+
+/* =========================================================
+   TOUCH DEVICES
+   LANDSCAPE
+========================================================= */
+
+@media (hover: none) and (pointer: coarse) and (orientation: landscape) {
+  .mobile-controls.active {
+    display: block !important;
+  }
+
+  .mobile-movement-controls,
+  .mobile-action-controls {
+    bottom: clamp(8px, 3vh, 20px);
+  }
+
+  .mobile-menu-controls {
+    top: clamp(4px, 1vh, 8px);
+  }
+
+  /* =======================================================
+     CENTER MUTE + FULLSCREEN
+  ======================================================= */
+
+  #mute-button,
+  .fullscreen-button {
+    left: 50%;
+    right: auto;
+
+    bottom: 4px;
+
+    width: 30px;
+    height: 30px;
+
+    z-index: 30;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  #mute-button {
+    transform: translateX(-36px);
+
+    padding: 0;
+
+    font-size: 14px;
+    line-height: 1;
+  }
+
+  .fullscreen-button {
+    transform: translateX(6px);
+
+    font-size: 14px;
+    line-height: 1;
+  }
+
+  /* =======================================================
+     LANDSCAPE SHOP
+  ======================================================= */
+
+  .shop-screen {
+    padding-top: clamp(8px, 2vh, 16px);
+    padding-bottom: clamp(8px, 2vh, 16px);
+
+    gap: clamp(3px, 1vh, 8px);
+  }
+
+  .shop-screen h2 {
+    font-size: clamp(22px, 6vh, 44px);
+  }
+
+  .shop-content {
+    max-width: min(96%, 650px);
+  }
+
+  .shop-item {
+    min-height: clamp(100px, 32vh, 165px);
+  }
+}
+
+/* =========================================================
+   SMALL LANDSCAPE DEVICES
+   320px - 480px
+========================================================= */
+
+@media (hover: none) and (pointer: coarse) and (orientation: landscape) and (max-width: 480px) {
+  .mobile-movement-controls {
+    left: 6px;
+    bottom: 8px;
+  }
+
+  .mobile-action-controls {
+    right: 6px;
+    bottom: 8px;
+  }
+
+  .mobile-menu-controls {
+    top: 4px;
+  }
+
+  .mobile-control-button {
+    width: clamp(36px, 10vh, 48px);
+    height: clamp(36px, 10vh, 48px);
+  }
+
+  #mobile-shop,
+  #mobile-pause {
+    width: 34px;
+    height: 34px;
+
+    font-size: 14px;
+  }
+
+  #mute-button,
+  .fullscreen-button {
+    width: 27px;
+    height: 27px;
+
+    bottom: 3px;
+  }
+
+  #mute-button {
+    transform: translateX(-32px);
+
+    font-size: 12px;
+  }
+
+  .fullscreen-button {
+    transform: translateX(5px);
+
+    font-size: 12px;
+  }
+
+  /* =======================================================
+     SMALL SHOP
+  ======================================================= */
+
+  .shop-screen {
+    padding: 6px;
+
+    gap: 3px;
+
+    justify-content: center;
+  }
+
+  .shop-screen h2 {
+    font-size: clamp(20px, 7vh, 30px);
+
+    line-height: 1;
+
+    margin: 0;
+  }
+
+  .shop-balance {
+    gap: 3px;
+  }
+
+  .shop-balance-label {
+    font-size: 9px;
+  }
+
+  .shop-balance-value img {
+    width: 28px;
+    height: 28px;
+  }
+
+  .shop-balance-value span {
+    font-size: 13px;
+  }
+
+  .shop-content {
+    width: 100%;
+
+    gap: 4px;
+  }
+
+  .shop-item {
+    width: calc((100% - 8px) / 3);
+
+    min-height: 0;
+
+    padding: 3px;
+
+    border-width: 2px;
+    border-radius: 8px;
+  }
+
+  .shop-item h3 {
+    font-size: 9px;
+  }
+
+  .shop-bottle-image {
+    width: 34px;
+    height: 34px;
+  }
+
+  .shop-magnet-image {
+    width: 32px;
+    height: 32px;
+  }
+
+  .shop-price {
+    font-size: 9px;
+  }
+
+  .shop-price img {
+    width: 25px;
+    height: 25px;
+  }
+
+  .shop-item button {
+    padding: 3px 2px;
+
+    font-size: 9px;
+  }
+
+  .coming-soon {
+    font-size: 7px;
+
+    margin-top: 1px;
+  }
+
+  .shop-back-button {
+    margin-top: 2px;
+
+    padding: 3px 12px;
+
+    font-size: 10px;
+  }
+}
+
+/* =========================================================
+   SMALL SCREENS
+   SETTINGS / CONTROLS / IMPRESSUM
+========================================================= */
+
+@media (hover: none) and (pointer: coarse) and (max-width: 480px) {
+  .settings-screen,
+  .controls-screen,
+  .impressum-screen {
+    padding: 12px;
+    gap: 12px;
+
+    overflow: hidden;
+  }
 
   .settings-screen h2,
   .controls-screen h2,
   .impressum-screen h2 {
-    font-size: clamp(24px, 6vh, 42px);
-  }
-}
-
-/* =========================================================
-   901px - 1024px
-========================================================= */
-
-@media (min-width: 901px) and (max-width: 1024px) and (orientation: landscape) {
-  .start-menu {
-    gap: 10px;
+    font-size: clamp(26px, 8vw, 40px);
   }
 
-  .start-menu button,
-  #play-button {
-    font-size: 17px;
-    padding: 8px 22px;
-  }
-
-  .setting label {
-    font-size: 18px;
-  }
-
-  .setting span {
-    font-size: 16px;
-  }
-
-  .controls-screen .controls-grid span {
-    font-size: 17px;
-  }
-
-  .impressum-content {
-    font-size: 13px;
-  }
-
-  .impressum-content h3 {
-    font-size: 17px;
-  }
-}
-
-/* =========================================================
-   801px - 900px
-========================================================= */
-
-@media (min-width: 801px) and (max-width: 900px) and (orientation: landscape) {
-  .start-screen {
-    gap: 12px;
-  }
-
-  .start-screen h1 {
-    font-size: clamp(34px, 6vh, 42px);
-  }
-
-  .start-menu {
-    gap: 7px;
-    margin-top: 4px;
-  }
-
-  .start-menu button,
-  #play-button {
-    width: 180px;
-    min-height: 30px;
-    padding: 5px 12px;
-    font-size: 15px;
-  }
-
-  .settings-screen,
-  .controls-screen,
-  .impressum-screen {
-    gap: 12px;
-    padding: 10px;
-  }
+  /* =========================
+     SETTINGS
+  ========================= */
 
   .settings-content {
-    width: min(380px, 90%);
-    gap: 12px;
+    width: min(90%, 340px);
+    gap: 14px;
   }
 
   .setting {
-    grid-template-columns: 80px 1fr 45px;
-    gap: 10px;
-  }
-
-  .setting label {
-    font-size: 16px;
-  }
-
-  .setting span {
-    font-size: 14px;
-  }
-
-  .controls-screen .controls-grid {
-    grid-template-columns: 100px 150px;
-    column-gap: 16px;
-    row-gap: 10px;
-  }
-
-  .controls-screen .controls-grid span {
-    font-size: 15px;
-  }
-
-  .controls-screen .key {
-    width: 40px;
-    height: 36px;
-    font-size: 15px;
-  }
-
-  .controls-screen .key-space {
-    width: 100px;
-  }
-
-  .impressum-content {
-    max-width: 500px;
-    max-height: 52vh;
-    font-size: 12px;
-    line-height: 1.25;
-  }
-
-  .impressum-content h3 {
-    font-size: 15px;
-  }
-
-  .settings-screen .game-over-button,
-  .controls-screen .game-over-button,
-  .impressum-screen .game-over-button {
-    padding: 7px 20px;
-    font-size: 16px;
-  }
-}
-
-/* =========================================================
-   701px - 800px
-========================================================= */
-
-@media (min-width: 701px) and (max-width: 800px) and (orientation: landscape) {
-  .start-screen h1 {
-    font-size: clamp(30px, 6vh, 38px);
-  }
-
-  .start-menu {
-    gap: 6px;
-    margin-top: 2px;
-  }
-
-  .start-menu button,
-  #play-button {
-    width: 165px;
-    min-height: 27px;
-    padding: 4px 10px;
-    font-size: 14px;
-  }
-
-  .settings-screen,
-  .controls-screen,
-  .impressum-screen {
-    gap: 9px;
-    padding: 8px;
-  }
-
-  .settings-content {
-    width: 88%;
-    gap: 9px;
-  }
-
-  .setting {
-    grid-template-columns: 72px 1fr 42px;
+    grid-template-columns: 70px minmax(0, 1fr) 42px;
     gap: 8px;
   }
 
   .setting label {
-    font-size: 15px;
+    font-size: clamp(13px, 4vw, 18px);
   }
 
   .setting span {
-    font-size: 13px;
+    font-size: clamp(12px, 3.5vw, 16px);
   }
 
+  /* =========================
+     CONTROLS
+  ========================= */
+
   .controls-screen .controls-grid {
-    grid-template-columns: 90px 135px;
+    width: min(94%, 340px);
+
+    grid-template-columns: 80px minmax(0, 1fr);
+
     column-gap: 12px;
-    row-gap: 8px;
+    row-gap: 10px;
   }
 
   .controls-screen .controls-grid span {
+    font-size: clamp(11px, 3.5vw, 16px);
+
+    overflow-wrap: break-word;
+  }
+
+  .key {
+    width: 38px;
+    height: 34px;
+
     font-size: 14px;
   }
 
-  .controls-screen .key {
-    width: 37px;
-    height: 33px;
-    font-size: 14px;
+  .key-group {
+    gap: 4px;
   }
 
-  .controls-screen .key-space {
-    width: 90px;
+  .key-space {
+    width: 82px;
   }
+
+  /* =========================
+     IMPRESSUM
+  ========================= */
 
   .impressum-content {
-    width: 88%;
-    max-width: 480px;
-    max-height: 50vh;
-    padding: 4px 10px;
-    font-size: 11px;
-    line-height: 1.2;
+    width: min(94%, 340px);
+
+    max-height: 55vh;
+
+    padding: 5px 10px;
+
+    font-size: clamp(9px, 2.8vw, 13px);
+
+    line-height: 1.25;
   }
 
   .impressum-content h3 {
-    font-size: 14px;
+    margin: 7px 0 4px;
+
+    font-size: clamp(12px, 3.5vw, 16px);
+  }
+
+  .impressum-content p {
+    margin: 4px 0 8px;
   }
 
   .settings-screen .game-over-button,
   .controls-screen .game-over-button,
   .impressum-screen .game-over-button {
     padding: 6px 18px;
-    font-size: 15px;
+
+    font-size: clamp(11px, 3vw, 15px);
   }
 }
 
 /* =========================================================
-   601px - 700px
+   ROTATE SCREEN
+   MUST ALWAYS BE ABOVE MOBILE CONTROLS
 ========================================================= */
 
-@media (min-width: 601px) and (max-width: 700px) and (orientation: landscape) {
-  .start-screen h1 {
-    font-size: clamp(27px, 6vh, 34px);
-  }
+.rotate-screen:not(.d-none) {
+  position: fixed;
 
-  .start-menu {
-    gap: 5px;
-    margin-top: 1px;
-  }
+  inset: 0;
 
-  .start-menu button,
-  #play-button {
-    width: 155px;
-    min-height: 25px;
-    padding: 3px 9px;
-    font-size: 13px;
-  }
+  width: 100vw;
+  height: 100vh;
 
-  .settings-screen,
-  .controls-screen,
-  .impressum-screen {
-    gap: 7px;
-    padding: 7px;
-  }
+  display: flex;
 
-  .settings-content {
-    width: 88%;
-    gap: 8px;
-  }
+  justify-content: center;
+  align-items: center;
 
-  .setting {
-    grid-template-columns: 65px 1fr 38px;
-    gap: 7px;
-  }
+  background: black;
 
-  .setting label {
-    font-size: 14px;
-  }
+  z-index: 2147483647;
 
-  .setting span {
-    font-size: 12px;
-  }
+  pointer-events: auto;
+}
 
-  .controls-screen .controls-grid {
-    grid-template-columns: 82px 125px;
-    column-gap: 10px;
-    row-gap: 7px;
-  }
+.rotate-screen:not(.d-none) img {
+  max-width: 90vw;
+  max-height: 90vh;
 
-  .controls-screen .controls-grid span {
-    font-size: 13px;
-  }
+  object-fit: contain;
+}
 
-  .controls-screen .key {
-    width: 34px;
-    height: 30px;
-    font-size: 13px;
-  }
-
-  .controls-screen .key-space {
-    width: 82px;
-  }
-
-  .impressum-content {
-    width: 90%;
-    max-height: 49vh;
-    padding: 3px 8px;
-    font-size: 10.5px;
-    line-height: 1.18;
-  }
-
-  .impressum-content h3 {
-    font-size: 13px;
-  }
-
-  .settings-screen .game-over-button,
-  .controls-screen .game-over-button,
-  .impressum-screen .game-over-button {
-    padding: 5px 16px;
-    font-size: 14px;
-  }
+/* Never show mobile controls while rotate screen is visible */
+body:has(.rotate-screen:not(.d-none)) .mobile-controls {
+  display: none !important;
+  pointer-events: none !important;
 }
 
 /* =========================================================
-   481px - 600px
+   SHOP OPEN
+   HIDE MOBILE GAME CONTROLS
 ========================================================= */
 
-@media (min-width: 481px) and (max-width: 600px) and (orientation: landscape) {
-  .start-screen {
-    gap: 3px;
-    padding: 3px;
-  }
+body.shop-open .mobile-controls {
+  display: none !important;
 
-  .start-screen h1 {
-    font-size: clamp(24px, 6vh, 30px);
-  }
-
-  .start-menu {
-    gap: 3px;
-  }
-
-  .start-menu button,
-  #play-button {
-    width: 150px;
-    min-height: 23px;
-    padding: 2px 8px;
-    font-size: 12px;
-  }
-
-  .settings-screen,
-  .controls-screen,
-  .impressum-screen {
-    gap: 6px;
-    padding: 6px;
-  }
-
-  .settings-content {
-    width: 90%;
-    gap: 7px;
-  }
-
-  .setting {
-    grid-template-columns: 60px 1fr 36px;
-    gap: 6px;
-  }
-
-  .setting label {
-    font-size: 13px;
-  }
-
-  .setting span {
-    font-size: 11px;
-  }
-
-  .controls-screen .controls-grid {
-    grid-template-columns: 76px 115px;
-    column-gap: 8px;
-    row-gap: 6px;
-  }
-
-  .controls-screen .controls-grid span {
-    font-size: 12px;
-  }
-
-  .controls-screen .key {
-    width: 31px;
-    height: 29px;
-    font-size: 12px;
-    border-width: 1px;
-  }
-
-  .controls-screen .key-group {
-    gap: 4px;
-  }
-
-  .controls-screen .key-space {
-    width: 76px;
-  }
-
-  .impressum-content {
-    width: 92%;
-    max-width: 92%;
-    max-height: 50vh;
-    padding: 3px 8px;
-    font-size: 10px;
-    line-height: 1.18;
-  }
-
-  .impressum-content h3 {
-    margin: 4px 0 2px;
-    font-size: 12px;
-  }
-
-  .settings-screen .game-over-button,
-  .controls-screen .game-over-button,
-  .impressum-screen .game-over-button {
-    padding: 5px 15px;
-    font-size: 13px;
-  }
+  pointer-events: none !important;
 }
 
 /* =========================================================
-   320px - 480px
+   PAUSE OPEN
+   HIDE MOBILE GAME CONTROLS
 ========================================================= */
 
-@media (max-width: 480px) and (orientation: landscape) {
-  .start-screen {
-    gap: 2px;
-    padding: 2px;
-  }
+body.pause-open .mobile-controls {
+  display: none !important;
 
-  .start-screen h1 {
-    font-size: clamp(21px, 6vh, 26px);
-  }
-
-  .start-menu {
-    gap: 2px;
-  }
-
-  .start-menu button,
-  #play-button {
-    width: 140px;
-    min-height: 21px;
-    padding: 2px 7px;
-    font-size: 11px;
-  }
-
-  .settings-screen,
-  .controls-screen,
-  .impressum-screen {
-    gap: 5px;
-    padding: 5px;
-  }
-
-  .settings-content {
-    width: 92%;
-    gap: 6px;
-  }
-
-  .setting {
-    grid-template-columns: 48px 1fr 30px;
-    gap: 5px;
-  }
-
-  .setting label {
-    font-size: 11px;
-  }
-
-  .setting span {
-    font-size: 10px;
-  }
-
-  .controls-screen .controls-grid {
-    grid-template-columns: 65px 105px;
-    column-gap: 6px;
-    row-gap: 4px;
-  }
-
-  .controls-screen .controls-grid span {
-    font-size: 10px;
-  }
-
-  .controls-screen .key {
-    width: 26px;
-    height: 24px;
-    font-size: 10px;
-  }
-
-  .controls-screen .key-space {
-    width: 65px;
-  }
-
-  .impressum-content {
-    width: 94%;
-    max-width: 94%;
-    max-height: 50vh;
-    padding: 3px 8px;
-    font-size: 9px;
-    line-height: 1.15;
-  }
-
-  .impressum-content h3 {
-    margin: 4px 0 2px;
-    font-size: 11px;
-  }
-
-  .impressum-content p {
-    margin: 2px 0 5px;
-  }
-
-  .settings-screen .game-over-button,
-  .controls-screen .game-over-button,
-  .impressum-screen .game-over-button {
-    padding: 5px 14px;
-    font-size: 12px;
-  }
+  pointer-events: none !important;
 }
 
 /* =========================================================
-   DESKTOP / LARGE SCREENS
-   1025px+
+   DESKTOP
+   NO TOUCH
 ========================================================= */
 
-@media (min-width: 1025px) {
+@media (hover: hover) and (pointer: fine) {
   .mobile-controls,
   .mobile-controls.active {
     display: none !important;
@@ -679,7 +784,9 @@
   #mute-button,
   .fullscreen-button {
     position: absolute;
+
     bottom: 5px;
+
     transform: none;
   }
 
@@ -691,5 +798,248 @@
   .fullscreen-button {
     left: auto;
     right: 5px;
+  }
+}
+
+/* =========================================================
+   SMALL SCREENS
+   MAIN MENU + CONTROLS
+   300px - 600px
+========================================================= */
+
+@media (max-width: 600px) {
+  /* =======================================================
+     START SCREEN
+  ======================================================= */
+
+  .start-screen {
+    width: 100%;
+    height: 100%;
+
+    padding: 12px;
+    gap: clamp(8px, 2vh, 16px);
+  }
+
+  .start-screen h1 {
+    width: 100%;
+
+    font-size: clamp(30px, 10vw, 54px);
+    line-height: 1;
+    text-align: center;
+
+    letter-spacing: 1px;
+  }
+
+  .start-menu {
+    width: min(90%, 250px);
+
+    gap: clamp(6px, 1.5vh, 10px);
+    margin-top: 0;
+  }
+
+  .start-menu button {
+    width: 100%;
+    min-height: 42px;
+
+    padding: 7px 14px;
+
+    font-size: clamp(13px, 4vw, 20px);
+    line-height: 1.1;
+  }
+
+  #play-button {
+    padding: 7px 14px;
+    font-size: clamp(13px, 4vw, 20px);
+  }
+
+  /* =======================================================
+     CONTROLS SCREEN
+  ======================================================= */
+
+  .controls-screen {
+    width: 100%;
+    height: 100%;
+
+    padding: clamp(8px, 2vw, 16px);
+    gap: clamp(8px, 2vh, 14px);
+
+    overflow: hidden;
+  }
+
+  .controls-screen h2 {
+    font-size: clamp(26px, 8vw, 44px);
+    line-height: 1;
+  }
+
+  .controls-screen .controls-grid {
+    width: min(92%, 420px);
+
+    grid-template-columns: minmax(80px, 110px) minmax(110px, 1fr);
+
+    column-gap: clamp(8px, 3vw, 18px);
+    row-gap: clamp(8px, 2vh, 14px);
+  }
+
+  .controls-screen .controls-grid span {
+    font-size: clamp(12px, 3.5vw, 18px);
+    line-height: 1.1;
+  }
+
+  .key {
+    width: clamp(38px, 12vw, 48px);
+    height: clamp(34px, 10vw, 42px);
+
+    font-size: clamp(13px, 3.5vw, 18px);
+  }
+
+  .key-group {
+    gap: 5px;
+  }
+
+  .key-space {
+    width: clamp(80px, 25vw, 120px);
+  }
+
+  .controls-screen .game-over-button {
+    flex-shrink: 0;
+
+    padding: clamp(5px, 1.5vw, 9px) clamp(14px, 4vw, 24px);
+
+    font-size: clamp(12px, 3.5vw, 18px);
+  }
+}
+
+/* =========================================================
+   VERY SMALL SCREENS
+   300px - 400px
+========================================================= */
+
+@media (max-width: 400px) {
+  /* =======================================================
+     START SCREEN
+  ======================================================= */
+
+  .start-screen {
+    padding: 8px;
+    gap: 8px;
+  }
+
+  .start-screen h1 {
+    font-size: clamp(26px, 9vw, 38px);
+  }
+
+  .start-menu {
+    width: min(88%, 220px);
+    gap: 5px;
+  }
+
+  .start-menu button,
+  #play-button {
+    min-height: 36px;
+
+    padding: 5px 10px;
+
+    font-size: clamp(11px, 3.8vw, 16px);
+  }
+
+  /* =======================================================
+     CONTROLS SCREEN
+  ======================================================= */
+
+  .controls-screen {
+    padding: 6px;
+    gap: 6px;
+  }
+
+  .controls-screen h2 {
+    font-size: clamp(22px, 8vw, 32px);
+  }
+
+  .controls-screen .controls-grid {
+    width: 94%;
+
+    grid-template-columns: 80px minmax(100px, 1fr);
+
+    column-gap: 8px;
+    row-gap: 6px;
+  }
+
+  .controls-screen .controls-grid span {
+    font-size: clamp(10px, 3.2vw, 14px);
+  }
+
+  .key {
+    width: 34px;
+    height: 30px;
+
+    font-size: 11px;
+
+    border-width: 1px;
+
+    box-shadow:
+      0 2px 0 #666,
+      0 4px 6px rgba(0, 0, 0, 0.35);
+  }
+
+  .key-group {
+    gap: 4px;
+  }
+
+  .key-space {
+    width: 70px;
+  }
+
+  .controls-screen .game-over-button {
+    padding: 4px 12px;
+    font-size: 11px;
+  }
+}
+
+/* =========================================================
+   EXTRA SMALL HEIGHT
+   Prevent vertical overflow
+========================================================= */
+
+@media (max-height: 500px) {
+  .start-screen {
+    padding: 6px;
+    gap: 6px;
+  }
+
+  .start-screen h1 {
+    font-size: clamp(24px, 8vh, 40px);
+  }
+
+  .start-menu {
+    gap: 4px;
+    margin-top: 0;
+  }
+
+  .start-menu button,
+  #play-button {
+    min-height: 32px;
+    padding: 4px 10px;
+    font-size: clamp(11px, 3vh, 16px);
+  }
+
+  .controls-screen {
+    padding: 5px;
+    gap: 5px;
+  }
+
+  .controls-screen h2 {
+    font-size: clamp(22px, 7vh, 34px);
+  }
+
+  .controls-screen .controls-grid {
+    row-gap: 4px;
+  }
+
+  .controls-screen .controls-grid span {
+    font-size: clamp(10px, 3vh, 14px);
+  }
+
+  .key {
+    height: 28px;
   }
 }

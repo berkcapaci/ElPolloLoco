@@ -1,10 +1,4 @@
-/**
- * Represents the playable Pepe character.
- * Handles movement, jumping, animations, collecting coins,
- * attacking enemies and the death sequence.
- *
- * @extends MovableObject
- */
+/** * Represents the playable Pepe character. */
 class Character extends MovableObject {
   height = 200;
   y = 120;
@@ -23,6 +17,7 @@ class Character extends MovableObject {
   idleThreshold = 15000;
   isSnoring = false;
   isJumping = false;
+
   offset = {
     top: 50,
     bottom: 20,
@@ -30,11 +25,7 @@ class Character extends MovableObject {
     right: 20,
   };
 
-  /**
-   * Idle animation images.
-   *
-   * @type {string[]}
-   */
+  /** * Idle animation images. */
   IMAGES_IDLE = [
     "img/2_character_pepe/1_idle/idle/I-1.png",
     "img/2_character_pepe/1_idle/idle/I-2.png",
@@ -48,11 +39,7 @@ class Character extends MovableObject {
     "img/2_character_pepe/1_idle/idle/I-10.png",
   ];
 
-  /**
-   * Long idle animation images.
-   *
-   * @type {string[]}
-   */
+  /** * Long idle animation images. */
   IMAGES_LONG_IDLE = [
     "img/2_character_pepe/1_idle/long_idle/I-11.png",
     "img/2_character_pepe/1_idle/long_idle/I-12.png",
@@ -66,11 +53,7 @@ class Character extends MovableObject {
     "img/2_character_pepe/1_idle/long_idle/I-20.png",
   ];
 
-  /**
-   * Walking animation images.
-   *
-   * @type {string[]}
-   */
+  /** * Walking animation images. */
   IMAGES_WALKING = [
     "img/2_character_pepe/2_walk/W-21.png",
     "img/2_character_pepe/2_walk/W-22.png",
@@ -80,11 +63,7 @@ class Character extends MovableObject {
     "img/2_character_pepe/2_walk/W-26.png",
   ];
 
-  /**
-   * Jumping animation images.
-   *
-   * @type {string[]}
-   */
+  /** * Jumping animation images. */
   IMAGES_JUMPING = [
     "img/2_character_pepe/3_jump/J-31.png",
     "img/2_character_pepe/3_jump/J-32.png",
@@ -97,11 +76,7 @@ class Character extends MovableObject {
     "img/2_character_pepe/3_jump/J-39.png",
   ];
 
-  /**
-   * Death animation images.
-   *
-   * @type {string[]}
-   */
+  /** * Death animation images. */
   IMAGES_DEAD = [
     "img/2_character_pepe/5_dead/D-51.png",
     "img/2_character_pepe/5_dead/D-52.png",
@@ -111,20 +86,14 @@ class Character extends MovableObject {
     "img/2_character_pepe/5_dead/D-56.png",
   ];
 
-  /**
-   * Hurt animation images.
-   *
-   * @type {string[]}
-   */
+  /** * Hurt animation images. */
   IMAGES_HURT = [
     "img/2_character_pepe/4_hurt/H-41.png",
     "img/2_character_pepe/4_hurt/H-42.png",
     "img/2_character_pepe/4_hurt/H-43.png",
   ];
 
-  /**
-   * Creates a new Character instance.
-   */
+  /** * Creates a new Character instance. */
   constructor() {
     super().loadImage("img/2_character_pepe/1_idle/idle/I-1.png");
     this.loadImages(this.IMAGES_IDLE);
@@ -137,9 +106,7 @@ class Character extends MovableObject {
     this.animate();
   }
 
-  /**
-   * Starts the character movement and animation intervals.
-   */
+  /** * Starts the character movement and animation intervals. */
   animate() {
     setInterval(() => {
       if (this.isDead() || this.isFrozen || this.world?.isStopped) {
@@ -151,24 +118,20 @@ class Character extends MovableObject {
       this.updateIdleTime();
       this.world.camera_x = -this.x + 100;
     }, 1000 / 60);
+
     setInterval(() => {
       this.updateAnimation();
     }, 100);
   }
 
-  /**
-   * Handles horizontal character movement.
-   */
+  /** * Handles horizontal character movement. */
   handleMovement() {
-    if (
-      this.world.keyboard.RIGHT &&
-      this.x < this.world.level.level_end_x &&
-      !this.world.isEndbossBlocking()
-    ) {
+    if (this.canMoveRight()) {
       this.moveRight();
       this.otherDirection = false;
       this.resetIdleTime();
     }
+
     if (this.world.keyboard.LEFT && this.x > 0) {
       this.moveLeft();
       this.otherDirection = true;
@@ -176,189 +139,161 @@ class Character extends MovableObject {
     }
   }
 
-  /**
-   * Handles the character jump input.
-   */
-  handleJump() {
-    if (this.world.keyboard.SPACE && !this.isAboveGround()) {
-      this.jump();
-      this.world.soundManager.play("jump");
-      this.resetIdleTime();
-    }
+  /** * Checks whether Pepe can move to the right. */
+  canMoveRight() {
+    return (
+      this.world.keyboard.RIGHT &&
+      this.x < this.world.level.level_end_x &&
+      !this.world.isEndbossBlocking()
+    );
   }
 
-  /**
-   * Updates the idle timer based on player activity.
-   */
+  /** * Handles the character jump input. */
+  handleJump() {
+    if (!this.world.keyboard.SPACE || this.isAboveGround()) {
+      return;
+    }
+    this.jump();
+    this.world.soundManager.play("jump");
+    this.resetIdleTime();
+  }
+
+  /** * Updates the idle timer based on player activity. */
   updateIdleTime() {
+    const keyboard = this.world.keyboard;
     const isMoving =
-      this.world.keyboard.RIGHT ||
-      this.world.keyboard.LEFT ||
-      this.world.keyboard.SPACE ||
-      this.world.keyboard.D;
+      keyboard.RIGHT || keyboard.LEFT || keyboard.SPACE || keyboard.D;
+
     if (isMoving || this.isAboveGround() || this.isHurt()) {
       this.resetIdleTime();
       return;
     }
+
     this.idleTime += 1000 / 60;
   }
 
-  /**
-   * Resets the idle timer and stops snoring if necessary.
-   */
+  /** * Resets the idle timer and stops snoring if necessary. */
   resetIdleTime() {
     this.idleTime = 0;
-    if (this.isSnoring) {
-      this.world.soundManager.stop("pepeSnore");
-      this.isSnoring = false;
+
+    if (!this.isSnoring) {
+      return;
     }
+
+    this.world.soundManager.stop("pepeSnore");
+    this.isSnoring = false;
   }
 
-  /**
-   * Selects the correct character animation based on the current state.
-   */
+  /** * Selects the correct character animation based on the current state. */
   updateAnimation() {
     if (this.isDead()) {
       this.playDeathAnimation();
       return;
     }
+
     if (this.isFrozen) {
       return;
     }
+
     if (this.isHurt()) {
       this.playAnimation(this.IMAGES_HURT);
       return;
     }
+
     if (this.isAboveGround()) {
       this.playAnimation(this.IMAGES_JUMPING);
       return;
     }
+
     if (this.isJumping) {
-      this.isJumping = false;
-
-      const firstJumpImage = this.IMAGES_JUMPING[0];
-      this.img = this.imageCache[firstJumpImage];
-
+      this.setFirstJumpImage();
       return;
     }
+
     if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
       this.playAnimation(this.IMAGES_WALKING);
       return;
     }
+
+    this.playIdleAnimation();
+  }
+
+  /** * Sets the first jump image after landing. */
+  setFirstJumpImage() {
+    this.isJumping = false;
+    const firstJumpImage = this.IMAGES_JUMPING[0];
+    this.img = this.imageCache[firstJumpImage];
+  }
+
+  /** * Plays the appropriate idle animation and starts snoring after a long idle period. */
+  playIdleAnimation() {
     if (this.idleTime >= this.idleThreshold) {
       this.playAnimation(this.IMAGES_LONG_IDLE);
+
       if (!this.isSnoring) {
         this.world.soundManager.play("pepeSnore");
         this.isSnoring = true;
       }
+
       return;
     }
+
     this.playAnimation(this.IMAGES_IDLE);
   }
 
-  /**
-   * Checks whether the character collides with a coin.
-   *
-   * @param {Coin} coin - The coin to check for collision.
-   * @returns {boolean} Whether the character collects the coin.
-   */
-  checkCoinCollisions() {
-    const availableCoins = this.level.coins;
-    const collectedCoinIndex = availableCoins.findIndex((coin) => {
-      return this.character.isColliding(coin);
-    });
-
-    if (collectedCoinIndex !== -1) {
-      availableCoins.splice(collectedCoinIndex, 1);
-      this.character.collectedCoins++;
-      this.coinCounter.currentCoinAmount = this.character.collectedCoins;
-    }
-  }
-  /**
-   * Plays the character death animation frame by frame.
-   */
+  /** * Plays the character death animation frame by frame. */
   playDeathAnimation() {
     if (this.deathAnimationFinished) {
       return;
     }
+
     const path = this.IMAGES_DEAD[this.deathImageIndex];
     this.img = this.imageCache[path];
+
     if (this.deathImageIndex < this.IMAGES_DEAD.length - 1) {
       this.deathImageIndex++;
-    } else {
-      this.deathAnimationFinished = true;
-      this.deathImage = this.img;
+      return;
     }
+
+    this.deathAnimationFinished = true;
+    this.deathImage = this.img;
   }
 
-  /**
-   * Stores the character position when death occurs.
-   */
+  /** * Stores the character position when death occurs. */
   die() {
     this.deathX = this.x;
     this.deathY = this.y;
   }
 
-  /**
-   * Moves the character to the left unless frozen.
-   */
+  /** * Moves the character to the left unless frozen. */
   moveLeft() {
-    if (this.isFrozen) {
-      return;
+    if (!this.isFrozen) {
+      super.moveLeft();
     }
-    super.moveLeft();
   }
 
-  /**
-   * Moves the character to the right unless frozen.
-   */
+  /** * Moves the character to the right unless frozen. */
   moveRight() {
-    if (this.isFrozen) {
-      return;
+    if (!this.isFrozen) {
+      super.moveRight();
     }
-    super.moveRight();
   }
 
-  /**
-   * Checks whether the character lands on an enemy from above.
-   */
+  /** * Checks whether the character lands on an enemy from above. */
   checkChickenStomp() {
     if (!this.isAboveGround() || this.speedY >= 0) {
       return;
     }
 
     this.world.level.enemies.forEach((enemy) => {
-      if (!this.isStompableEnemy(enemy)) {
-        return;
-      }
-
-      const characterBottom = this.y + this.height;
-      const enemyTop = enemy.y;
-      const stompOffsetX = 30;
-      const stompWidth = this.width - 60;
-      const characterLeft = this.x + stompOffsetX;
-      const characterRight = characterLeft + stompWidth;
-      const enemyLeft = enemy.x;
-      const enemyRight = enemy.x + enemy.width;
-      const isHorizontallyOverlapping =
-        characterRight > enemyLeft && characterLeft < enemyRight;
-
-      const isLandingOnEnemy =
-        characterBottom >= enemyTop && characterBottom <= enemyTop + 30;
-
-      if (isHorizontallyOverlapping && isLandingOnEnemy) {
+      if (this.isStompableEnemy(enemy) && this.isLandingOnEnemy(enemy)) {
         enemy.hit();
         this.speedY = 20;
       }
     });
   }
 
-  /**
-   * Checks whether an enemy can be stomped by the character.
-   *
-   * @param {MovableObject} enemy - The enemy to check.
-   * @returns {boolean} Whether the enemy is stompable.
-   */
+  /** * Checks whether an enemy can be stomped by the character. */
   isStompableEnemy(enemy) {
     return (
       (enemy instanceof Chicken || enemy instanceof SmallChicken) &&
@@ -366,15 +301,32 @@ class Character extends MovableObject {
     );
   }
 
-  /**
-   * Applies damage to the character and handles the death state.
-   */
-  hit() {
+  /** * Checks whether Pepe is landing on an enemy. */
+  isLandingOnEnemy(enemy) {
+    const characterBottom = this.y + this.height;
+    const characterLeft = this.x + 30;
+    const characterRight = characterLeft + this.width - 60;
+    const enemyTop = enemy.y;
+    const enemyLeft = enemy.x;
+    const enemyRight = enemy.x + enemy.width;
+
+    const isHorizontallyOverlapping =
+      characterRight > enemyLeft && characterLeft < enemyRight;
+
+    return (
+      isHorizontallyOverlapping &&
+      characterBottom >= enemyTop &&
+      characterBottom <= enemyTop + 30
+    );
+  }
+
+  /** * Applies damage to the character and handles the death state. */
+  hit(damage) {
     if (this.isDead()) {
       return;
     }
 
-    super.hit();
+    super.hit(damage);
     this.resetIdleTime();
 
     if (this.energy > 0) {
@@ -388,9 +340,7 @@ class Character extends MovableObject {
     }
   }
 
-  /**
-   * Makes the character jump.
-   */
+  /** * Makes the character jump. */
   jump() {
     this.speedY = 30;
     this.isJumping = true;

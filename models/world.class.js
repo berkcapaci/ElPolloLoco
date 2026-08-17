@@ -1,5 +1,6 @@
 /**
- * Controls the game world, including the character, enemies, collisions, camera, rendering, game states and game loop.
+ * Controls the game world, including the character, enemies, collisions,
+ * camera, rendering, game states and game loop.
  */
 class World {
   /** @type {Character} */
@@ -47,7 +48,7 @@ class World {
   /** @type {SoundManager} */
   soundManager;
 
-  /** Creates a new game world. */
+  /** * Creates a new game world. */
   constructor(canvas, keyboard, soundManager) {
     this.canvas = canvas;
     this.ctx = canvas.getContext("2d");
@@ -66,7 +67,7 @@ class World {
     this.run();
   }
 
-  /** Connects the character and enemies to the current world. */
+  /** * Connects the character and enemies to the current world. */
   setWorld() {
     this.character.world = this;
     this.level.enemies.forEach((enemy) => {
@@ -74,7 +75,7 @@ class World {
     });
   }
 
-  /** Starts the main game loop. */
+  /** * Starts the main game loop. */
   run() {
     this.gameInterval = setInterval(() => {
       if (this.isStopped) {
@@ -92,7 +93,7 @@ class World {
     }, 1000 / 60);
   }
 
-  /** Stops the game loop, animation frame and active timers. */
+  /** * Stops the game loop, animation frame and active timers. */
   stop() {
     this.isStopped = true;
     clearInterval(this.gameInterval);
@@ -105,7 +106,7 @@ class World {
     });
   }
 
-  /** Resumes the game and restarts the game loop. */
+  /** * Resumes the game and restarts the game loop. */
   resume() {
     this.isStopped = false;
     this.level.enemies.forEach((enemy) => {
@@ -115,112 +116,122 @@ class World {
     this.run();
   }
 
-  /** Checks collisions between the character and enemies. */
+  /** * Checks collisions between the character and enemies. */
   checkCollisions() {
     this.level.enemies.forEach((enemy) => {
-      if (enemy.isChickenDead || enemy.isEndbossDead) {
+      if (
+        enemy.isChickenDead ||
+        enemy.isEndbossDead ||
+        enemy instanceof Endboss
+      ) {
         return;
       }
-      let isColliding = false;
-      if (enemy instanceof Chicken) {
-        isColliding = enemy.isCharacterInAttackRange(this.character);
-      } else {
-        isColliding = this.character.isColliding(enemy);
+      const isColliding =
+        enemy instanceof Chicken
+          ? enemy.isCharacterInAttackRange(this.character)
+          : this.character.isColliding(enemy);
+      if (!isColliding || this.character.isHurt()) {
+        return;
       }
-      if (isColliding) {
-        if (this.character.isHurt()) {
-          return;
-        }
-        this.character.hit();
-        this.statusBar.setPercentage(this.character.energy);
-      }
+      this.character.hit(this.getEnemyDamage(enemy));
+      this.statusBar.setPercentage(this.character.energy);
     });
   }
 
-  /** Checks whether the character collects a coin. */
+  /** * Returns the amount of damage an enemy deals to the character. */
+  getEnemyDamage(enemy) {
+    if (enemy instanceof SmallChicken) {
+      return 10;
+    }
+    if (enemy instanceof Chicken) {
+      return 20;
+    }
+    return 0;
+  }
+
+  /** * Checks whether the character collects a coin. */
   checkCoinCollisions() {
-    const availableCoins = this.level.coins;
-    const collectedCoinIndex = availableCoins.findIndex((coin) => {
+    const collectedCoinIndex = this.level.coins.findIndex((coin) => {
       return this.character.isColliding(coin);
     });
-    if (collectedCoinIndex !== -1) {
-      availableCoins.splice(collectedCoinIndex, 1);
-      this.character.collectedCoins++;
-      this.coinCounter.currentCoinAmount = this.character.collectedCoins;
+    if (collectedCoinIndex === -1) {
+      return;
     }
+    this.level.coins.splice(collectedCoinIndex, 1);
+    this.character.collectedCoins++;
+    this.coinCounter.currentCoinAmount = this.character.collectedCoins;
   }
 
-  /** Checks whether the character collects a bottle. */
+  /** * Checks whether the character collects a bottle. */
   checkBottleCollection() {
-    const availableBottles = this.level.bottles;
-    const collectedBottleIndex = availableBottles.findIndex((currentBottle) => {
-      return this.character.isColliding(currentBottle);
+    const collectedBottleIndex = this.level.bottles.findIndex((bottle) => {
+      return this.character.isColliding(bottle);
     });
-    if (collectedBottleIndex !== -1) {
-      availableBottles.splice(collectedBottleIndex, 1);
-      this.character.collectedBottles++;
-      this.bottleCounter.currentBottleAmount = this.character.collectedBottles;
+    if (collectedBottleIndex === -1) {
+      return;
     }
+    this.level.bottles.splice(collectedBottleIndex, 1);
+    this.character.collectedBottles++;
+    this.bottleCounter.currentBottleAmount = this.character.collectedBottles;
   }
 
-  /** Checks collisions between thrown bottles and enemies. */
+  /** * Checks collisions between thrown bottles and enemies. */
   checkBottleCollision() {
     this.throwableObjects.forEach((bottle) => {
       if (bottle.isBroken) {
         return;
       }
       this.level.enemies.forEach((enemy) => {
-        let isBottleCollision = false;
-        if (enemy instanceof Endboss) {
-          isBottleCollision = enemy.isCollidingWithBottle(bottle);
-        } else if (enemy instanceof Chicken) {
-          isBottleCollision = enemy.isCollidingWithBottle(bottle);
-        } else {
-          isBottleCollision = bottle.isColliding(enemy);
+        if (enemy.isChickenDead || enemy.isEndbossDead) {
+          return;
         }
-        if (isBottleCollision) {
-          bottle.breakBottle();
-          enemy.hit();
-          if (enemy instanceof Endboss) {
-            this.endbossBar.setEnergy(enemy.energy);
-          }
+        const isBottleCollision =
+          enemy instanceof Endboss || enemy instanceof Chicken
+            ? enemy.isCollidingWithBottle(bottle)
+            : bottle.isColliding(enemy);
+        if (!isBottleCollision) {
+          return;
+        }
+        bottle.breakBottle();
+        enemy.hit();
+        if (enemy instanceof Endboss) {
+          this.endbossBar.setEnergy(enemy.energy);
         }
       });
     });
   }
 
-  /** Creates and throws a bottle when the player presses D. */
+  /** * Creates and throws a bottle when D is pressed. */
   checkThrowObjects() {
-    if (this.character.isFrozen) {
+    if (
+      this.character.isFrozen ||
+      !this.keyboard.D ||
+      this.character.collectedBottles <= 0 ||
+      !this.canThrowBottle
+    ) {
       return;
     }
-    if (
-      this.keyboard.D &&
-      this.character.collectedBottles > 0 &&
-      this.canThrowBottle
-    ) {
-      const bottle = new ThrowableObject(
-        this.character.x + 50,
-        this.character.y + 70,
-      );
-      bottle.world = this;
-      this.throwableObjects.push(bottle);
-      this.soundManager.play("bottleThrow");
-      this.character.collectedBottles--;
-      this.bottleCounter.currentBottleAmount = this.character.collectedBottles;
-      this.canThrowBottle = false;
-      this.throwCooldownTimeout = setTimeout(() => {
-        this.canThrowBottle = true;
-      }, 600);
-    }
+    const bottle = new ThrowableObject(
+      this.character.x + 50,
+      this.character.y + 70,
+    );
+    bottle.world = this;
+    this.throwableObjects.push(bottle);
+    this.soundManager.play("bottleThrow");
+    this.character.collectedBottles--;
+    this.bottleCounter.currentBottleAmount = this.character.collectedBottles;
+    this.canThrowBottle = false;
+    this.throwCooldownTimeout = setTimeout(() => {
+      this.canThrowBottle = true;
+    }, 600);
   }
 
-  /** Returns the endboss from the current level. */
+  /** * Returns the endboss from the current level. */
   getEndboss() {
     return this.level.enemies.find((enemy) => enemy instanceof Endboss);
   }
 
-  /** Checks whether the endboss is visible on the screen. */
+  /** * Checks whether the endboss is visible on the screen. */
   isEndbossVisible() {
     const endboss = this.getEndboss();
     if (!endboss) {
@@ -230,7 +241,7 @@ class World {
     return screenX < this.canvas.width && screenX + endboss.width > 0;
   }
 
-  /** Checks whether the endboss blocks the character's movement. */
+  /** * Checks whether the endboss blocks the character's movement. */
   isEndbossBlocking() {
     const endboss = this.getEndboss();
     if (!endboss) {
@@ -240,38 +251,24 @@ class World {
     return this.character.x + this.character.width >= endbossLeft;
   }
 
-  /** Draws the complete game world and HUD. */
+  /** * Draws the complete game world and HUD. */
   draw() {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
     this.ctx.translate(this.camera_x, 0);
-
     this.addObjectToMap(this.level.backgroundObjects);
     this.addObjectToMap(this.level.clouds);
-
-    // Collectible objects behind enemies
     this.addObjectToMap(this.level.coins);
     this.addObjectToMap(this.level.bottles);
-
-    // Throwable bottles behind enemies
     this.addObjectToMap(this.throwableObjects);
-
-    // Enemies in front of bottles
     this.addObjectToMap(this.level.enemies);
-
-    // Character in front of enemies
     this.addToMap(this.character);
-
     this.ctx.translate(-this.camera_x, 0);
-
     this.addToMap(this.statusBar);
     this.addToMap(this.coinCounter);
     this.addToMap(this.bottleCounter);
-
     if (this.isEndbossVisible()) {
       this.endbossBar.draw(this.ctx);
     }
-
     this.animationFrameId = requestAnimationFrame(() => {
       if (!this.isStopped) {
         this.draw();
@@ -279,14 +276,14 @@ class World {
     });
   }
 
-  /** Adds multiple game objects to the map. */
+  /** * Adds multiple game objects to the map. */
   addObjectToMap(objects) {
-    objects.forEach((o) => {
-      this.addToMap(o);
+    objects.forEach((object) => {
+      this.addToMap(object);
     });
   }
 
-  /** Adds a single game object to the map. */
+  /** * Adds a single game object to the map. */
   addToMap(mo) {
     if (mo.otherDirection) {
       this.flipImage(mo);
@@ -294,32 +291,32 @@ class World {
     mo.draw(this.ctx);
     mo.drawFrame(this.ctx);
     if (mo.otherDirection) {
-      this.flipImageBack(mo);
+      this.flipImageBack();
     }
   }
 
-  /** Flips an object horizontally. */
+  /** * Flips an object horizontally. */
   flipImage(mo) {
     this.ctx.save();
     this.ctx.translate(2 * mo.x + mo.width, 0);
     this.ctx.scale(-1, 1);
   }
 
-  /** Restores the canvas after flipping an object. */
-  flipImageBack(mo) {
+  /** * Restores the canvas after flipping an object. */
+  flipImageBack() {
     this.ctx.restore();
   }
 
-  /** Removes throwable objects that are marked for deletion. */
+  /** * Removes throwable objects marked for deletion. */
   removeMarkedThrowableObjects() {
     this.throwableObjects = this.throwableObjects.filter(
       (throwableObject) => !throwableObject.markedForDeletion,
     );
   }
 
-  /** Removes dead chickens after their death animation duration. */
+  /** * Removes dead chickens after their death animation duration. */
   removeDeadChickens() {
-    const currentTime = new Date().getTime();
+    const currentTime = Date.now();
     this.level.enemies = this.level.enemies.filter((enemy) => {
       if (!enemy.isChickenDead) {
         return true;
@@ -328,7 +325,7 @@ class World {
     });
   }
 
-  /** Displays the win screen. */
+  /** * Displays the win screen. */
   showWinScreen() {
     const winScreen = document.querySelector(".win-screen");
     if (!winScreen) {
@@ -337,7 +334,7 @@ class World {
     winScreen.classList.remove("d-none");
   }
 
-  /** Checks whether the player has defeated the endboss. */
+  /** * Checks whether the player has defeated the endboss. */
   checkWinCondition() {
     const endboss = this.getEndboss();
     if (!endboss || this.gameWon) {
@@ -348,7 +345,7 @@ class World {
     }
   }
 
-  /** Handles the game win state. */
+  /** * Handles the game win state. */
   handleGameWin() {
     this.gameWon = true;
     this.character.isFrozen = true;
@@ -356,7 +353,7 @@ class World {
     this.scheduleWinScreen();
   }
 
-  /** Plays the win sound after the endboss death sound has finished. */
+  /** * Plays the win sound after the endboss death sound has finished. */
   playWinSoundAfterBossDeath() {
     const bossDeathSound = this.soundManager.sounds.bossDeath;
     if (bossDeathSound.ended) {
@@ -374,7 +371,7 @@ class World {
     );
   }
 
-  /** Displays the win screen after a short delay. */
+  /** * Displays the win screen after a short delay. */
   scheduleWinScreen() {
     this.winScreenTimeout = setTimeout(() => {
       if (!this.isStopped) {
@@ -383,7 +380,7 @@ class World {
     }, 1000);
   }
 
-  /** Displays the lose screen. */
+  /** * Displays the lose screen. */
   showLoseScreen() {
     const loseScreen = document.getElementById("lose-screen");
     if (!loseScreen) {
@@ -392,23 +389,21 @@ class World {
     loseScreen.classList.remove("d-none");
   }
 
-  /** Checks whether the character has died. */
+  /** * Checks whether the character has died. */
   checkLoseCondition() {
-    if (this.gameLost) {
+    if (this.gameLost || !this.character.isDead()) {
       return;
     }
-    if (this.character.isDead()) {
-      this.gameLost = true;
-      this.soundManager.play("lose");
-      const endboss = this.getEndboss();
-      if (endboss) {
-        endboss.isFrozen = true;
-      }
-      this.loseScreenTimeout = setTimeout(() => {
-        if (!this.isStopped) {
-          this.showLoseScreen();
-        }
-      }, 2000);
+    this.gameLost = true;
+    this.soundManager.play("lose");
+    const endboss = this.getEndboss();
+    if (endboss) {
+      endboss.isFrozen = true;
     }
+    this.loseScreenTimeout = setTimeout(() => {
+      if (!this.isStopped) {
+        this.showLoseScreen();
+      }
+    }, 2000);
   }
 }

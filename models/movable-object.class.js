@@ -53,9 +53,12 @@ class MovableObject extends DrawableObject {
 
   /**
    * Reduces the object's energy and records the time of the last hit.
+   *
+   * @param {number} damage - The amount of energy to remove.
    */
-  hit() {
-    this.energy -= 5;
+  hit(damage) {
+    this.energy -= damage;
+
     if (this.energy <= 0) {
       this.energy = 0;
     } else {

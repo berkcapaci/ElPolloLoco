@@ -10,6 +10,7 @@ class Endboss extends MovableObject {
   width = 350;
   y = 100;
   energy = 400;
+
   offset = {
     top: 100,
     bottom: 100,
@@ -24,11 +25,11 @@ class Endboss extends MovableObject {
 
   isEndbossDead = false;
   deathAnimationFinished = false;
-
   currentState = "WALK";
 
   alertDistance = 800;
-  attackDistance = 50;
+  attackDistance = 220;
+  attackApproachDistance = 140;
 
   startX = 5050;
   returnDistance = 900;
@@ -112,54 +113,48 @@ class Endboss extends MovableObject {
   ];
 
   /**
-   * Creates a new Endboss.
+   * Creates a new endboss.
    */
   constructor() {
     super().loadImage(this.IMAGES_WALKING[0]);
-
     this.loadImages(this.IMAGES_WALKING);
     this.loadImages(this.IMAGES_ALERT);
     this.loadImages(this.IMAGES_ATTACK);
     this.loadImages(this.IMAGES_HURT);
     this.loadImages(this.IMAGES_DEAD);
-
     this.x = this.startX;
-
     this.animate();
   }
 
   /**
    * Reduces the endboss energy and changes its state.
-   * Starts the death state when the energy reaches zero.
+   *
+   * @param {number} damage - Amount of damage received.
    */
-  hit() {
-    this.energy -= 20;
-
+  hit(damage = 20) {
+    this.energy -= damage;
     if (this.energy <= 0) {
       this.energy = 0;
       this.isEndbossDead = true;
       this.currentState = "DEAD";
       this.currentImage = 0;
-
       if (!this.deathSoundPlayed) {
         this.world.soundManager.play("bossDeath");
         this.deathSoundPlayed = true;
       }
-
       return;
     }
-
     this.currentState = "HURT";
     this.currentImage = 0;
-
     this.world.soundManager.play("bossHurt");
-
-    let hurtAnimation = setInterval(() => {
+    const hurtAnimation = setInterval(() => {
+      if (this.isEndbossDead || this.isFrozen) {
+        clearInterval(hurtAnimation);
+        return;
+      }
       this.playAnimation(this.IMAGES_HURT);
-
       if (this.currentImage >= this.IMAGES_HURT.length) {
         clearInterval(hurtAnimation);
-
         this.currentState = "WALK";
         this.currentImage = 0;
       }
@@ -182,41 +177,59 @@ class Endboss extends MovableObject {
   }
 
   /**
-   * Starts all endboss animation and behavior intervals.
-   * Controls walking, alert, attacking, hurt and death states.
+   * Returns Pepe's horizontal center position.
+   *
+   * @returns {number} Pepe's center position.
+   */
+  getCharacterCenter() {
+    const character = this.world.character;
+    return character.x + character.width / 2;
+  }
+
+  /**
+   * Returns the horizontal center position of the endboss.
+   *
+   * @returns {number} Endboss center position.
+   */
+  getEndbossCenter() {
+    return this.x + this.width / 2;
+  }
+
+  /**
+   * Returns the horizontal distance between Pepe and the endboss.
+   *
+   * @returns {number} Horizontal distance between Pepe and endboss.
+   */
+  getDistanceToCharacter() {
+    return Math.abs(this.getEndbossCenter() - this.getCharacterCenter());
+  }
+
+  /**
+   * Starts the endboss animation and behavior intervals.
+   * Controls walking, alert, attack, hurt and death states.
    */
   animate() {
     setInterval(() => {
       if (this.isEndbossDead) {
         if (!this.deathAnimationFinished) {
           this.playAnimation(this.IMAGES_DEAD);
-
           if (this.currentImage >= this.IMAGES_DEAD.length) {
             this.currentImage = this.IMAGES_DEAD.length - 1;
             this.deathAnimationFinished = true;
           }
         }
-
         return;
       }
-
       if (this.isFrozen) {
         return;
       }
-
       if (this.currentState === "WALK") {
         this.playAnimation(this.IMAGES_WALKING);
-      }
-
-      if (this.currentState === "ALERT") {
+      } else if (this.currentState === "ALERT") {
         this.playAnimation(this.IMAGES_ALERT);
-      }
-
-      if (this.currentState === "ATTACK") {
+      } else if (this.currentState === "ATTACK") {
         this.playAnimation(this.IMAGES_ATTACK);
-      }
-
-      if (this.currentState === "HURT") {
+      } else if (this.currentState === "HURT") {
         this.playAnimation(this.IMAGES_HURT);
       }
     }, 200);
@@ -225,101 +238,121 @@ class Endboss extends MovableObject {
       if (!this.world || this.isEndbossDead || this.isFrozen) {
         return;
       }
-
-      const character = this.world.character;
-      const distance = this.x - character.x;
-
+      const distance = this.getDistanceToCharacter();
       if (
         distance <= this.alertDistance &&
         this.currentState === "WALK" &&
         !this.alertFinished
       ) {
-        this.currentState = "ALERT";
-        this.currentImage = 0;
-
-        this.world.soundManager.play("bossAlert");
-
-        setTimeout(() => {
-          if (!this.isEndbossDead) {
-            this.alertFinished = true;
-            this.currentState = "WALK";
-            this.currentImage = 0;
-          }
-        }, this.IMAGES_ALERT.length * 200);
-
+        this.startAlert();
         return;
       }
-
       if (this.alertFinished && this.currentState === "WALK") {
         if (distance <= this.attackDistance) {
           this.startAttack();
         } else {
-          this.moveBoss(distance);
+          this.moveBoss(this.getCharacterCenter());
         }
       }
     }, 1000 / 60);
   }
 
   /**
-   * Moves the endboss towards or away from the character
-   * depending on the current distance.
-   *
-   * @param {number} distance - Distance between the endboss and character.
+   * Starts the endboss alert animation.
    */
-  moveBoss(distance) {
+  startAlert() {
+    this.currentState = "ALERT";
+    this.currentImage = 0;
+    this.world.soundManager.play("bossAlert");
+    setTimeout(() => {
+      if (!this.isEndbossDead && !this.isFrozen) {
+        this.alertFinished = true;
+        this.currentState = "WALK";
+        this.currentImage = 0;
+      }
+    }, this.IMAGES_ALERT.length * 200);
+  }
+
+  /**
+   * Moves the endboss towards Pepe until the attack distance is reached.
+   *
+   * @param {number} characterCenter - The center position of Pepe.
+   */
+  moveBoss(characterCenter) {
+    const endbossCenter = this.getEndbossCenter();
+    const distance = Math.abs(endbossCenter - characterCenter);
     if (distance <= this.attackDistance) {
       return;
     }
-
-    if (distance <= this.returnDistance) {
+    if (characterCenter < endbossCenter) {
       this.x -= this.bossSpeed;
       this.otherDirection = false;
-      return;
-    }
-
-    if (this.x < this.startX) {
+    } else if (characterCenter > endbossCenter && this.x < this.startX) {
       this.x += this.bossSpeed;
       this.otherDirection = true;
     }
   }
 
   /**
+   * Moves the endboss closer to Pepe before applying attack damage.
+   *
+   * @param {number} characterCenter - The center position of Pepe.
+   */
+  moveCloserForAttack(characterCenter) {
+    const endbossCenter = this.getEndbossCenter();
+    const distance = Math.abs(endbossCenter - characterCenter);
+    if (distance <= this.attackApproachDistance) {
+      return;
+    }
+    const approachAmount = distance - this.attackApproachDistance;
+    if (characterCenter < endbossCenter) {
+      this.x -= approachAmount;
+      this.otherDirection = false;
+    } else {
+      this.x += approachAmount;
+      this.otherDirection = true;
+    }
+  }
+
+  /**
    * Starts the endboss attack sequence.
-   * Includes the attack animation, damage timing and cooldown.
+   *
+   * Moves closer to Pepe before attacking.
+   * The attack hits after attackHitFrame * 100 ms
+   * and the next attack is allowed after 500 ms.
    */
   startAttack() {
     if (this.attackCooldown || this.isEndbossDead || this.isFrozen) {
       return;
     }
-
+    const characterCenter = this.getCharacterCenter();
+    if (this.getDistanceToCharacter() > this.attackDistance) {
+      return;
+    }
+    this.moveCloserForAttack(characterCenter);
     this.attackCooldown = true;
     this.attackHit = false;
-
     this.currentState = "ATTACK";
     this.currentImage = 0;
-
     this.world.soundManager.play("bossAttack");
-
     this.spawnSmallChicken();
 
-    const attackFrameTime = this.attackHitFrame * 200;
-
+    const attackFrameTime = this.attackHitFrame * 100;
     setTimeout(() => {
-      if (!this.isEndbossDead) {
+      if (!this.isEndbossDead && !this.isFrozen) {
         this.dealAttackDamage();
       }
     }, attackFrameTime);
 
     setTimeout(
       () => {
-        if (!this.isEndbossDead) {
+        if (!this.isEndbossDead && !this.isFrozen) {
           this.currentState = "WALK";
           this.currentImage = 0;
         }
-
         this.attackCooldown = false;
       },
-      this.IMAGES_ATTACK.length * 200 + 300,
+      this.IMAGES_ATTACK.length * 100 + 500,
     );
   }
 
@@ -330,30 +363,28 @@ class Endboss extends MovableObject {
     if (this.smallChickenCooldown || this.isEndbossDead) {
       return;
     }
-
     this.smallChickenCooldown = true;
-
     const smallChicken = new SmallChicken(this.x - 10);
-
     smallChicken.world = this.world;
     this.world.level.enemies.push(smallChicken);
-
     setTimeout(() => {
       this.smallChickenCooldown = false;
     }, this.smallChickenInterval);
   }
 
   /**
-   * Checks whether the endboss attack hits the character
-   * and applies damage when appropriate.
+   * Checks whether the endboss attack hits Pepe.
+   *
+   * Pepe receives 30 damage when he is within the attack range.
    */
   dealAttackDamage() {
-    if (this.attackHit || !this.world || this.isFrozen) {
+    if (this.attackHit || !this.world || this.isFrozen || this.isEndbossDead) {
       return;
     }
-    const character = this.world.character;
-    if (this.isColliding(character)) {
-      character.hit();
+    const attackHitRange = 160;
+    if (this.getDistanceToCharacter() <= attackHitRange) {
+      const character = this.world.character;
+      character.hit(30);
       this.world.statusBar.setPercentage(character.energy);
       this.attackHit = true;
     }
