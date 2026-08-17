@@ -37,12 +37,11 @@
     <script src="levels/level1.js"></script>
     <script src="models/world.class.js"></script>
     <script src="js/menu.js"></script>
+    <script src="js/mobile.js"></script>
     <script src="js/game.js"></script>
   </head>
   <body>
-    <!-- =========================
-           ROTATE SCREEN
-      ========================== -->
+    <!-- Mobile rotation screen -->
     <div id="rotate-screen" class="rotate-screen d-none">
       <img
         src="assets/image/rotatedevice.png"
@@ -50,33 +49,69 @@
       />
     </div>
 
-    <!-- =========================
-           MOBILE CONTROLS
-      ========================== -->
-
+    <!-- Mobile controls -->
     <div id="mobile-controls" class="mobile-controls">
       <div class="mobile-movement-controls">
-        <button id="mobile-left" class="mobile-control-button">←</button>
-        <button id="mobile-right" class="mobile-control-button">→</button>
+        <button
+          id="mobile-left"
+          class="mobile-control-button"
+          aria-label="Move left"
+        >
+          ←
+        </button>
+
+        <button
+          id="mobile-right"
+          class="mobile-control-button"
+          aria-label="Move right"
+        >
+          →
+        </button>
       </div>
 
       <div class="mobile-action-controls">
-        <button id="mobile-jump" class="mobile-control-button">Jump</button>
+        <button
+          id="mobile-jump"
+          class="mobile-control-button"
+          aria-label="Jump"
+        >
+          Jump
+        </button>
 
-        <button id="mobile-throw" class="mobile-control-button">
+        <button
+          id="mobile-throw"
+          class="mobile-control-button"
+          aria-label="Throw bottle"
+        >
           <img
             src="img/7_statusbars/3_icons/icon_salsa_bottle.png"
             alt="Throw bottle"
           />
         </button>
       </div>
+
+      <div class="mobile-menu-controls">
+        <button
+          id="mobile-shop"
+          class="mobile-control-button"
+          aria-label="Open shop"
+        >
+          🛒
+        </button>
+
+        <button
+          id="mobile-pause"
+          class="mobile-control-button"
+          aria-label="Pause game"
+        >
+          ⏸
+        </button>
+      </div>
     </div>
+
     <div class="content">
       <div class="game-container">
-        <!-- =========================
-           START SCREEN
-      ========================== -->
-
+        <!-- Start screen -->
         <div class="start-screen">
           <h1>El Pollo Loco</h1>
 
@@ -99,16 +134,10 @@
           </div>
         </div>
 
-        <!-- =========================
-           CANVAS
-      ========================== -->
-
+        <!-- Game canvas -->
         <canvas id="canvas" width="720" height="480"></canvas>
 
-        <!-- =========================
-           PAUSE SCREEN
-      ========================== -->
-
+        <!-- Pause screen -->
         <div id="pause-screen" class="pause-screen d-none">
           <div class="pause-content">
             <h2>Game Paused</h2>
@@ -118,10 +147,7 @@
           </div>
         </div>
 
-        <!-- =========================
-           FULLSCREEN BUTTON
-      ========================== -->
-
+        <!-- Fullscreen button -->
         <button
           id="fullscreen-button"
           class="fullscreen-button"
@@ -131,16 +157,10 @@
           ⛶
         </button>
 
-        <!-- =========================
-           MUTE BUTTON
-      ========================== -->
-
+        <!-- Mute button -->
         <button id="mute-button" onclick="toggleMute()">🔊</button>
 
-        <!-- =========================
-     SOUND SETTINGS SCREEN
-========================== -->
-
+        <!-- Sound settings -->
         <div
           id="setting-screen"
           class="settings-screen click-outside-close d-none"
@@ -150,7 +170,6 @@
           <div class="settings-content">
             <div class="setting">
               <label for="music-volume">Music</label>
-
               <input
                 id="music-volume"
                 type="range"
@@ -159,13 +178,11 @@
                 step="0.01"
                 value="0.3"
               />
-
               <span id="music-volume-value">30%</span>
             </div>
 
             <div class="setting">
               <label for="effects-volume">Effects</label>
-
               <input
                 id="effects-volume"
                 type="range"
@@ -174,7 +191,6 @@
                 step="0.01"
                 value="0.9"
               />
-
               <span id="effects-volume-value">90%</span>
             </div>
           </div>
@@ -183,61 +199,72 @@
             Back
           </button>
         </div>
-
-        <!-- =========================
-     SHOP SCREEN
-========================== -->
-
+        <!-- Shop -->
         <div id="shop-screen" class="shop-screen click-outside-close d-none">
           <h2>Shop</h2>
+
           <div class="shop-balance">
             <span class="shop-balance-label">Your Coins:</span>
+
             <div class="shop-balance-value">
               <img src="img/7_statusbars/3_icons/icon_coin.png" alt="Coin" />
               <span id="shop-coin-amount">0</span>
             </div>
           </div>
+
           <div class="shop-content">
             <div class="shop-item">
               <h3>1 Bottle</h3>
+
               <img
                 class="shop-item-image shop-bottle-image"
                 src="img/7_statusbars/3_icons/icon_salsa_bottle.png"
                 alt="Bottle"
               />
+
               <div class="shop-price">
                 <img src="img/8_coin/coin_1.png" alt="Coin" />
                 <span>3</span>
               </div>
+
               <button onclick="buyBottle(1, 3)">Buy</button>
             </div>
+
             <div class="shop-item">
               <h3>5 Bottles</h3>
+
               <img
                 class="shop-item-image shop-bottle-image"
                 src="img/7_statusbars/3_icons/icon_salsa_bottle.png"
                 alt="Bottles"
               />
+
               <div class="shop-price">
                 <img src="img/8_coin/coin_1.png" alt="Coin" />
                 <span>10</span>
               </div>
+
               <button onclick="buyBottle(5, 10)">Buy</button>
             </div>
+
             <div class="shop-item">
               <h3>Coin Magnet</h3>
+
               <img
                 class="shop-item-image shop-magnet-image"
                 src="assets/image/magnet.png"
                 alt="Coin Magnet"
               />
+
               <div class="shop-price">
                 <img src="img/8_coin/coin_1.png" alt="Coin" />
                 <span>15</span>
               </div>
+
               <span class="coming-soon">Coming Soon</span>
             </div>
           </div>
+
           <button
             class="game-over-button shop-back-button"
             onclick="closeShop()"
@@ -246,10 +273,7 @@
           </button>
         </div>
 
-        <!-- =========================
-           CONTROLS SCREEN
-      ========================== -->
-
+        <!-- Controls screen -->
         <div
           id="controls-screen"
           class="controls-screen click-outside-close d-none"
@@ -261,19 +285,20 @@
               <div class="key">←</div>
               <div class="key">→</div>
             </div>
-            <span> Move </span>
+
+            <span>Move</span>
 
             <div class="key key-space">SPACE</div>
-            <span> Jump </span>
+            <span>Jump</span>
 
             <div class="key">D</div>
-            <span> Throw Bottle </span>
+            <span>Throw Bottle</span>
 
             <div class="key">S</div>
-            <span> Shop </span>
+            <span>Shop</span>
 
             <div class="key">ESC</div>
-            <span> Pause Game </span>
+            <span>Pause Game</span>
           </div>
 
           <button class="game-over-button" onclick="closeControls()">
@@ -281,10 +306,7 @@
           </button>
         </div>
 
-        <!-- =========================
-           IMPRESSUM SCREEN
-      ========================== -->
-
+        <!-- Impressum -->
         <div
           id="impressum-screen"
           class="impressum-screen click-outside-close d-none"
@@ -298,7 +320,7 @@
 
             <p>
               E-Mail:
-              <a href="mailto:[berkcapaci@hotmail.com.tr]">
+              <a href="mailto:berkcapaci@hotmail.com.tr">
                 berkcapaci@hotmail.com.tr
               </a>
             </p>
@@ -329,10 +351,7 @@
           </button>
         </div>
 
-        <!-- =========================
-           WIN SCREEN
-      ========================== -->
-
+        <!-- Win screen -->
         <div id="win-screen" class="win-screen d-none">
           <h1>You Win!</h1>
 
@@ -343,10 +362,7 @@
           <button class="game-over-button" onclick="showMenu()">Menu</button>
         </div>
 
-        <!-- =========================
-           LOSE SCREEN
-      ========================== -->
-
+        <!-- Lose screen -->
         <div id="lose-screen" class="lose-screen d-none">
           <h1>You Lost</h1>
 

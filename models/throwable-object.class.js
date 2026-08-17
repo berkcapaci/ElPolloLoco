@@ -4,7 +4,7 @@ class ThrowableObject extends MovableObject {
   throwInterval;
   rotationInterval;
   splashInterval;
-  
+
   IMAGES_ROTATING = [
     "img/6_salsa_bottle/bottle_rotation/1_bottle_rotation.png",
     "img/6_salsa_bottle/bottle_rotation/2_bottle_rotation.png",
@@ -21,6 +21,14 @@ class ThrowableObject extends MovableObject {
     "img/6_salsa_bottle/bottle_rotation/bottle_splash/6_bottle_splash.png",
   ];
 
+  /**
+   * Creates a new throwable bottle.
+   *
+   * @param {number} x - The horizontal starting position of the bottle.
+   * @param {number} y - The vertical starting position of the bottle.
+   * @param {boolean} otherDirection - Determines whether the bottle is thrown in the opposite direction.
+   * @param {World} world - The current game world.
+   */
   constructor(x, y, otherDirection, world) {
     super().loadImage("img/7_statusbars/3_icons/icon_salsa_bottle.png");
     this.loadImages(this.IMAGES_ROTATING);
@@ -33,10 +41,18 @@ class ThrowableObject extends MovableObject {
     this.throw();
   }
 
+  /**
+   * Checks whether the bottle is above the ground.
+   *
+   * @returns {boolean} True if the bottle is above the ground.
+   */
   isAboveGround() {
     return this.y < 350;
   }
 
+  /**
+   * Breaks the bottle and starts the splash animation.
+   */
   breakBottle() {
     if (this.isBroken) {
       return;
@@ -59,9 +75,13 @@ class ThrowableObject extends MovableObject {
     }, 100);
   }
 
+  /**
+   * Throws the bottle and starts its movement, gravity, and rotation animation.
+   */
   throw() {
     this.speedY = 30;
     this.applyGravity();
+
     this.throwInterval = setInterval(() => {
       if (!this.isAboveGround()) {
         this.breakBottle();
@@ -69,6 +89,7 @@ class ThrowableObject extends MovableObject {
       }
       this.x += 10;
     }, 25);
+
     this.rotationInterval = setInterval(() => {
       if (!this.isBroken) {
         this.playAnimation(this.IMAGES_ROTATING);

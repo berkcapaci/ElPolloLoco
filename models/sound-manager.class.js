@@ -1,4 +1,13 @@
+/**
+ * Manages all game sounds, background music, volume settings
+ * and the mute state.
+ */
 class SoundManager {
+  /**
+   * Stores all game audio objects.
+   *
+   * @type {Object.<string, HTMLAudioElement>}
+   */
   sounds = {
     backgroundMusic: new Audio("audio/background_music.mp3"),
     jump: new Audio("audio/jump.mp3"),
@@ -16,8 +25,18 @@ class SoundManager {
     lose: new Audio("audio/lose.mp3"),
   };
 
+  /**
+   * Indicates whether all sounds are muted.
+   *
+   * @type {boolean}
+   */
   isMuted = false;
 
+  /**
+   * Stores the default volume for each sound effect.
+   *
+   * @type {Object.<string, number>}
+   */
   soundVolumes = {
     jump: 0.6,
     bottleThrow: 1.0,
@@ -34,9 +53,23 @@ class SoundManager {
     lose: 1.0,
   };
 
+  /**
+   * Current background music volume.
+   *
+   * @type {number}
+   */
   musicVolume = 0.3;
+
+  /**
+   * Current sound effects volume.
+   *
+   * @type {number}
+   */
   effectsVolume = 0.9;
 
+  /**
+   * Creates a new SoundManager and loads saved audio settings.
+   */
   constructor() {
     const savedMusicVolume = localStorage.getItem("musicVolume");
     const savedEffectsVolume = localStorage.getItem("effectsVolume");
@@ -65,26 +98,33 @@ class SoundManager {
     }
   }
 
+  /**
+   * Plays a sound effect.
+   *
+   * @param {string} soundName - Name of the sound to play.
+   * @returns {HTMLAudioElement|null} The played audio element or null if not found.
+   */
   play(soundName) {
     const sound = this.sounds[soundName];
-
     if (!sound) {
-      return;
+      return null;
     }
-
     sound.currentTime = 0;
-
     const soundVolume = this.soundVolumes[soundName] ?? 1.0;
-
     if (this.isMuted) {
       sound.volume = 0;
     } else {
       sound.volume = soundVolume * this.effectsVolume;
     }
-
     sound.play();
+    return sound;
   }
 
+  /**
+   * Stops a sound effect and resets its playback position.
+   *
+   * @param {string} soundName - Name of the sound to stop.
+   */
   stop(soundName) {
     const sound = this.sounds[soundName];
 
@@ -96,18 +136,27 @@ class SoundManager {
     sound.currentTime = 0;
   }
 
+  /**
+   * Starts or resumes the background music.
+   * Stops the music when muted or when the volume is zero.
+   */
   playMusic() {
     const music = this.sounds.backgroundMusic;
+
     if (this.isMuted || this.musicVolume === 0) {
       music.pause();
       music.volume = 0;
       return;
     }
+
     music.volume = this.musicVolume;
+
     if (!music.paused) {
       return;
     }
+
     music.play();
+
     music.ontimeupdate = () => {
       if (music.duration && music.currentTime >= music.duration - 2) {
         music.currentTime = 0;
@@ -115,6 +164,11 @@ class SoundManager {
     };
   }
 
+  /**
+   * Toggles the global mute state.
+   *
+   * @returns {boolean} The current mute state.
+   */
   toggleMute() {
     this.isMuted = !this.isMuted;
 
@@ -143,6 +197,9 @@ class SoundManager {
     return this.isMuted;
   }
 
+  /**
+   * Stops the background music and resets its playback position.
+   */
   stopMusic() {
     const music = this.sounds.backgroundMusic;
 
@@ -151,23 +208,46 @@ class SoundManager {
     music.ontimeupdate = null;
   }
 
+  /**
+   * Sets the background music volume.
+   *
+   * @param {number} volume - Music volume between 0 and 1.
+   */
   setMusicVolume(volume) {
     this.musicVolume = volume;
+
     const music = this.sounds.backgroundMusic;
+
     if (this.isMuted || volume === 0) {
       music.volume = 0;
       music.pause();
     } else {
       music.volume = volume;
+
       if (music.paused) {
         music.play();
       }
     }
+
     localStorage.setItem("musicVolume", volume);
   }
 
+  /**
+   * Sets the sound effects volume.
+   *
+   * @param {number} volume - Effects volume between 0 and 1.
+   */
   setEffectsVolume(volume) {
     this.effectsVolume = volume;
+
+    Object.keys(this.soundVolumes).forEach((soundName) => {
+      const sound = this.sounds[soundName];
+
+      if (sound) {
+        sound.volume = this.soundVolumes[soundName] * this.effectsVolume;
+      }
+    });
+
     localStorage.setItem("effectsVolume", volume);
   }
 }

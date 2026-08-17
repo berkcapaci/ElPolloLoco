@@ -3,7 +3,30 @@ let world;
 let keyboard = new Keyboard();
 let soundManager = new SoundManager();
 
+const keyMap = {
+  83: "S",
+  39: "RIGHT",
+  37: "LEFT",
+  38: "UP",
+  40: "DOWN",
+  32: "SPACE",
+  68: "D",
+};
+
+/**
+ * Starts the game and switches from the menu to the game screen.
+ */
 function startGame() {
+  hideMenuScreens();
+  showGameScreen();
+  init();
+  soundManager.playMusic();
+}
+
+/**
+ * Hides all menu, settings, shop, and game-over screens.
+ */
+function hideMenuScreens() {
   document.querySelector(".start-screen").classList.add("d-none");
   document.querySelector(".win-screen").classList.add("d-none");
   document.querySelector(".lose-screen").classList.add("d-none");
@@ -12,37 +35,49 @@ function startGame() {
   document.getElementById("impressum-screen").classList.add("d-none");
   document.getElementById("shop-screen").classList.add("d-none");
   document.getElementById("pause-screen").classList.add("d-none");
-  document.getElementById("canvas").style.display = "block";
-  document.getElementById("mobile-controls").classList.add("active");
-  init();
-  soundManager.playMusic();
 }
 
+/**
+ * Displays the game canvas and activates the mobile controls.
+ */
+function showGameScreen() {
+  document.getElementById("canvas").style.display = "block";
+  document.getElementById("mobile-controls").classList.add("active");
+}
+
+/**
+ * Initializes the game world using the canvas, keyboard, and sound manager.
+ */
 function init() {
   canvas = document.getElementById("canvas");
   world = new World(canvas, keyboard, soundManager);
 }
 
+/**
+ * Restarts the game without reloading the page.
+ */
 function restartGame() {
-  if (world) {
-    world.stop();
-  }
-  keyboard = new Keyboard();
-  document.querySelector(".win-screen").classList.add("d-none");
-  document.querySelector(".lose-screen").classList.add("d-none");
-  document.getElementById("pause-screen").classList.add("d-none");
-  document.getElementById("shop-screen").classList.add("d-none");
-  canvas = document.getElementById("canvas");
-  const ctx = canvas.getContext("2d");
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  stopCurrentGame();
+  resetGameState();
+  clearCanvas();
   init();
   soundManager.playMusic();
 }
 
-function showMenu() {
+/**
+ * Stops the currently running game and stops the character's snoring sound.
+ */
+function stopCurrentGame() {
   if (world) {
     world.stop();
   }
+  soundManager.stop("pepeSnore");
+}
+
+/**
+ * Resets the keyboard and hides all active game screens.
+ */
+function resetGameState() {
   keyboard = new Keyboard();
   document.querySelector(".win-screen").classList.add("d-none");
   document.querySelector(".lose-screen").classList.add("d-none");
@@ -51,17 +86,51 @@ function showMenu() {
   document.getElementById("setting-screen").classList.add("d-none");
   document.getElementById("controls-screen").classList.add("d-none");
   document.getElementById("impressum-screen").classList.add("d-none");
-  document.getElementById("canvas").style.display = "none";
-  document.getElementById("mobile-controls").classList.remove("active");
-  document.querySelector(".start-screen").classList.remove("d-none");
+}
+
+/**
+ * Clears the complete game canvas.
+ */
+function clearCanvas() {
+  canvas = document.getElementById("canvas");
+  const ctx = canvas.getContext("2d");
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+}
+
+/**
+ * Stops the current game and returns the player to the main menu.
+ */
+function showMenu() {
+  stopCurrentGame();
+  resetGameState();
+  hideGameScreen();
+  showStartScreen();
   soundManager.playMusic();
 }
 
+/**
+ * Hides the game canvas and deactivates the mobile controls.
+ */
+function hideGameScreen() {
+  document.getElementById("canvas").style.display = "none";
+  document.getElementById("mobile-controls").classList.remove("active");
+}
+
+/**
+ * Displays the main start screen.
+ */
+function showStartScreen() {
+  document.querySelector(".start-screen").classList.remove("d-none");
+}
+
+/**
+ * Toggles the pause state of the current game.
+ */
 function togglePause() {
   if (!world || world.gameWon || world.gameLost) {
     return;
   }
-  const pauseScreen = document.getElementById("pause-screen");
+  const pauseScreen = getPauseScreen();
   if (!pauseScreen) {
     return;
   }
@@ -72,11 +141,23 @@ function togglePause() {
   }
 }
 
+/**
+ * Returns the pause screen element.
+ *
+ * @returns {HTMLElement|null} The pause screen element or null if not found.
+ */
+function getPauseScreen() {
+  return document.getElementById("pause-screen");
+}
+
+/**
+ * Pauses the game and displays the pause screen.
+ */
 function pauseGame() {
   if (!world) {
     return;
   }
-  const pauseScreen = document.getElementById("pause-screen");
+  const pauseScreen = getPauseScreen();
   if (!pauseScreen) {
     return;
   }
@@ -84,11 +165,14 @@ function pauseGame() {
   world.stop();
 }
 
+/**
+ * Resumes the game and hides the pause screen.
+ */
 function resumeGame() {
   if (!world) {
     return;
   }
-  const pauseScreen = document.getElementById("pause-screen");
+  const pauseScreen = getPauseScreen();
   if (!pauseScreen) {
     return;
   }
@@ -96,152 +180,109 @@ function resumeGame() {
   world.resume();
 }
 
-window.addEventListener("keydown", (e) => {
-  if (e.key === "Escape" && !e.repeat) {
-    const startScreen = document.querySelector(".start-screen");
-    if (startScreen && !startScreen.classList.contains("d-none")) {
-      return;
-    }
-    if (world && !world.gameWon && !world.gameLost) {
-      togglePause();
-    }
+/**
+ * Handles the Escape key and toggles the pause state during gameplay.
+ *
+ * @param {KeyboardEvent} event - The keyboard event triggered by the user.
+ */
+function handleEscapeKey(event) {
+  if (event.repeat) {
     return;
   }
-  if (e.keyCode === 83 && !e.repeat) {
-    const pauseScreen = document.getElementById("pause-screen");
-    if (pauseScreen && !pauseScreen.classList.contains("d-none")) {
-      return;
-    }
-    keyboard.S = true;
-    if (world && !world.gameWon && !world.gameLost) {
-      const shopScreen = document.getElementById("shop-screen");
-      if (shopScreen.classList.contains("d-none")) {
-        openShop();
-      } else {
-        closeShop();
-      }
-    }
+  const startScreen = document.querySelector(".start-screen");
+  const shopScreen = document.getElementById("shop-screen");
+  if (startScreen && !startScreen.classList.contains("d-none")) {
     return;
   }
-  if (e.keyCode === 39) {
-    keyboard.RIGHT = true;
+  if (shopScreen && !shopScreen.classList.contains("d-none")) {
+    return;
   }
-  if (e.keyCode === 37) {
-    keyboard.LEFT = true;
+  if (world && !world.gameWon && !world.gameLost) {
+    togglePause();
   }
-  if (e.keyCode === 38) {
-    keyboard.UP = true;
-  }
-  if (e.keyCode === 40) {
-    keyboard.DOWN = true;
-  }
-  if (e.keyCode === 32) {
-    keyboard.SPACE = true;
-  }
-  if (e.keyCode === 68) {
-    keyboard.D = true;
-  }
-});
+}
 
-window.addEventListener("keyup", (e) => {
-  if (e.keyCode === 83) {
-    keyboard.S = false;
+/**
+ * Handles the S key and toggles the shop during gameplay.
+ *
+ * @param {KeyboardEvent} event - The keyboard event triggered by the user.
+ */
+function handleShopKey(event) {
+  if (event.repeat) {
+    return;
   }
-  if (e.keyCode === 39) {
-    keyboard.RIGHT = false;
+  const pauseScreen = document.getElementById("pause-screen");
+  if (pauseScreen && !pauseScreen.classList.contains("d-none")) {
+    return;
   }
-  if (e.keyCode === 37) {
-    keyboard.LEFT = false;
+  if (world && !world.gameWon && !world.gameLost) {
+    toggleShop();
   }
-  if (e.keyCode === 38) {
-    keyboard.UP = false;
-  }
-  if (e.keyCode === 40) {
-    keyboard.DOWN = false;
-  }
-  if (e.keyCode === 32) {
-    keyboard.SPACE = false;
-  }
-  if (e.keyCode === 68) {
-    keyboard.D = false;
-  }
-});
+}
 
-window.addEventListener("DOMContentLoaded", () => {
+/**
+ * Opens or closes the shop depending on its current visibility.
+ */
+function toggleShop() {
+  const shopScreen = document.getElementById("shop-screen");
+  if (!shopScreen) {
+    return;
+  }
+  if (shopScreen.classList.contains("d-none")) {
+    openShop();
+  } else {
+    closeShop();
+  }
+}
+
+/**
+ * Handles a pressed game key and updates the keyboard state.
+ *
+ * @param {KeyboardEvent} event - The keyboard event triggered by the user.
+ */
+function handleGameKey(event) {
+  const key = keyMap[event.keyCode];
+  if (key) {
+    keyboard[key] = true;
+  }
+}
+
+/**
+ * Handles a released game key and updates the keyboard state.
+ *
+ * @param {KeyboardEvent} event - The keyboard event triggered by the user.
+ */
+function handleGameKeyUp(event) {
+  const key = keyMap[event.keyCode];
+  if (key) {
+    keyboard[key] = false;
+  }
+}
+
+/**
+ * Initializes volume controls, the mute button, and background music.
+ */
+function initializeGame() {
   setupVolumeControls();
   setupMuteButton();
   soundManager.playMusic();
-});
-
-function toggleFullscreen() {
-  const gameContainer = document.querySelector(".game-container");
-  if (!document.fullscreenElement) {
-    gameContainer.requestFullscreen();
-  } else {
-    document.exitFullscreen();
-  }
 }
 
-function checkScreenOrientation() {
-  const rotateScreen = document.getElementById("rotate-screen");
-  if (!rotateScreen) {
+/**
+ * Closes a modal when the user clicks directly on its overlay.
+ *
+ * @param {MouseEvent} event - The click event triggered by the user.
+ */
+function handleModalClick(event) {
+  const overlay = event.target.closest(".click-outside-close");
+  if (!overlay || event.target !== overlay) {
     return;
   }
-  const isMobileDevice = /Android|iPhone|iPad|iPod|Windows Phone|Pixel /i.test(
-    navigator.userAgent,
-  );
-  if (!isMobileDevice) {
-    rotateScreen.classList.add("d-none");
-    return;
-  }
-  if (window.innerHeight > window.innerWidth) {
-    rotateScreen.classList.remove("d-none");
-  } else {
-    rotateScreen.classList.add("d-none");
+  const closeFunction = modalCloseFunctions[overlay.id];
+  if (closeFunction) {
+    closeFunction();
   }
 }
-
-function setupMobileControls() {
-  const mobileControls = document.getElementById("mobile-controls");
-  if (!mobileControls) {
-    return;
-  }
-  const buttons = {
-    "mobile-left": "LEFT",
-    "mobile-right": "RIGHT",
-    "mobile-jump": "SPACE",
-    "mobile-throw": "D",
-  };
-  Object.entries(buttons).forEach(([buttonId, key]) => {
-    const button = document.getElementById(buttonId);
-    if (!button) {
-      return;
-    }
-    button.addEventListener("pointerdown", (event) => {
-      event.preventDefault();
-      keyboard[key] = true;
-    });
-    button.addEventListener("pointerup", (event) => {
-      event.preventDefault();
-      keyboard[key] = false;
-    });
-    button.addEventListener("pointercancel", () => {
-      keyboard[key] = false;
-    });
-    button.addEventListener("pointerleave", () => {
-      keyboard[key] = false;
-    });
-  });
-}
-
-function handleOrientationChange() {
-  checkScreenOrientation();
-}
-
-window.addEventListener("load", checkScreenOrientation);
-window.addEventListener("resize", checkScreenOrientation);
-window.addEventListener("orientationchange", handleOrientationChange);
-window.addEventListener("load", setupMobileControls);
 
 const modalCloseFunctions = {
   "setting-screen": closeSettings,
@@ -250,16 +291,21 @@ const modalCloseFunctions = {
   "impressum-screen": closeImpressum,
 };
 
-document.addEventListener("click", (event) => {
-  const overlay = event.target.closest(".click-outside-close");
-  if (!overlay) {
+window.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") {
+    handleEscapeKey(e);
     return;
   }
-  if (event.target !== overlay) {
+  if (e.keyCode === 83) {
+    handleShopKey(e);
     return;
   }
-  const closeFunction = modalCloseFunctions[overlay.id];
-  if (closeFunction) {
-    closeFunction();
-  }
+  handleGameKey(e);
 });
+
+window.addEventListener("keyup", (e) => {
+  handleGameKeyUp(e);
+});
+
+window.addEventListener("DOMContentLoaded", initializeGame);
+document.addEventListener("click", handleModalClick);

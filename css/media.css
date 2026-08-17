@@ -51,6 +51,34 @@
   .mobile-controls {
     display: block;
   }
+
+  .shop-content {
+    gap: clamp(5px, 1.5vw, 14px);
+    width: 100%;
+  }
+
+  .shop-item {
+    width: clamp(100px, 20vw, 145px);
+    height: clamp(125px, 30vh, 165px);
+    padding: 5px;
+    gap: 2px;
+  }
+
+  .shop-bottle-image {
+    width: clamp(42px, 8vw, 70px);
+    height: clamp(42px, 8vw, 70px);
+  }
+
+  .shop-magnet-image {
+    width: clamp(40px, 7vw, 65px);
+    height: clamp(40px, 7vw, 65px);
+  }
+
+  .mobile-control-button {
+    width: clamp(48px, 10vw, 64px);
+    height: clamp(48px, 10vw, 64px);
+    font-size: clamp(20px, 4vw, 28px);
+  }
 }
 
 .mobile-controls {
@@ -62,9 +90,9 @@
 }
 
 .mobile-movement-controls,
-.mobile-action-controls {
+.mobile-action-controls,
+.mobile-menu-controls {
   position: absolute;
-  bottom: 20px;
   display: flex;
   gap: 12px;
   pointer-events: auto;
@@ -72,9 +100,16 @@
 
 .mobile-movement-controls {
   left: 20px;
+  bottom: 20px;
 }
 
 .mobile-action-controls {
+  right: 20px;
+  bottom: 20px;
+}
+
+.mobile-menu-controls {
+  top: 20px;
   right: 20px;
 }
 
@@ -95,19 +130,475 @@
 }
 
 .mobile-control-button img {
-    width: 60px;
-    height: 60px;
-    object-fit: contain;
-    pointer-events: none;
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
+  pointer-events: none;
 }
 
 #mobile-jump {
-    font-size: 18px;
-    font-weight: bold;
+  font-size: 18px;
+  font-weight: bold;
 }
 
 @media (orientation: landscape) and (pointer: coarse) {
-    .mobile-controls {
-        display: block;
-    }
+  .mobile-controls.active {
+    display: block !important;
+    pointer-events: none;
+  }
+}
+
+/* =================================
+   MOBILE LANDSCAPE SHOP / CONTROLS
+   Applies up to 900 x 600
+================================= */
+
+@media (max-width: 900px) and (max-height: 600px) and (orientation: landscape) {
+  .start-screen {
+    gap: 8px;
+  }
+
+  .start-screen h1 {
+    font-size: clamp(24px, 8vh, 48px);
+  }
+
+  .start-menu {
+    gap: 6px;
+  }
+
+  .start-menu button {
+    padding: 6px 18px;
+    font-size: clamp(12px, 4vh, 20px);
+  }
+
+  .win-screen h1,
+  .lose-screen h1 {
+    font-size: clamp(28px, 10vh, 52px);
+  }
+
+  /* =========================
+     MOBILE GAME CONTROLS
+  ========================= */
+
+  .mobile-movement-controls,
+  .mobile-action-controls {
+    bottom: clamp(8px, 3vh, 20px);
+    gap: clamp(6px, 2vw, 12px);
+  }
+
+  .mobile-movement-controls {
+    left: clamp(8px, 3vw, 20px);
+  }
+
+  .mobile-action-controls {
+    right: clamp(8px, 3vw, 20px);
+  }
+
+  .mobile-menu-controls {
+    top: clamp(8px, 3vh, 20px);
+    right: clamp(8px, 3vw, 20px);
+    gap: clamp(6px, 2vw, 12px);
+  }
+
+  .mobile-control-button {
+    width: clamp(40px, 10vh, 58px);
+    height: clamp(40px, 10vh, 58px);
+    font-size: clamp(16px, 4vh, 24px);
+  }
+
+  .mobile-control-button img {
+    width: clamp(34px, 8vh, 52px);
+    height: clamp(34px, 8vh, 52px);
+  }
+
+  #mobile-jump {
+    font-size: clamp(12px, 3vh, 18px);
+  }
+
+  /* =========================
+     SHOP SCREEN
+  ========================= */
+
+  .shop-screen {
+    gap: 8px;
+    padding: 8px;
+    overflow: hidden;
+  }
+
+  .shop-screen h2 {
+    font-size: clamp(28px, 8vh, 42px);
+    margin: 0;
+  }
+
+  .shop-balance {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: clamp(11px, 2.5vh, 16px);
+  }
+
+  .shop-balance-value {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+  }
+
+  .shop-balance-value img {
+    width: clamp(24px, 6vh, 36px);
+    height: clamp(24px, 6vh, 36px);
+    object-fit: contain;
+  }
+
+  .shop-balance-value span {
+    font-size: clamp(12px, 3vh, 18px);
+  }
+
+  .shop-content {
+    gap: clamp(4px, 1vw, 10px);
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .shop-item {
+    width: clamp(80px, 18vw, 120px);
+    height: clamp(95px, 25vh, 140px);
+    padding: 4px;
+    gap: 2px;
+  }
+
+  .shop-item h3 {
+    font-size: clamp(11px, 2.5vh, 16px);
+    margin: 0;
+  }
+
+  .shop-bottle-image {
+    width: clamp(30px, 7vh, 50px);
+    height: clamp(30px, 7vh, 50px);
+  }
+
+  .shop-magnet-image {
+    width: clamp(28px, 6vh, 45px);
+    height: clamp(28px, 6vh, 45px);
+  }
+
+  .shop-price {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+  }
+
+  .shop-price img {
+    width: clamp(18px, 4vh, 26px);
+    height: clamp(18px, 4vh, 26px);
+    object-fit: contain;
+  }
+
+  .shop-price span {
+    font-size: clamp(10px, 2.5vh, 15px);
+  }
+
+  .shop-item button {
+    padding: 4px 8px;
+    font-size: clamp(9px, 2vh, 13px);
+  }
+
+  .coming-soon {
+    font-size: clamp(8px, 2vh, 12px);
+  }
+
+  .shop-back-button {
+    padding: 6px 18px;
+    font-size: clamp(12px, 3vh, 18px);
+  }
+}
+
+/* =========================
+   MOBILE MENU SCREENS
+========================= */
+
+@media (max-width: 900px) and (orientation: landscape) {
+  .settings-screen,
+  .controls-screen,
+  .impressum-screen {
+    width: 100%;
+    height: 100%;
+    inset: 0;
+    gap: clamp(10px, 2.5vh, 28px);
+    padding: clamp(10px, 2vh, 20px);
+    box-sizing: border-box;
+  }
+
+  .settings-screen h2,
+  .controls-screen h2,
+  .impressum-screen h2 {
+    font-size: clamp(26px, 6vh, 54px);
+  }
+
+  /* =========================
+     SETTINGS
+  ========================= */
+
+  .settings-content {
+    width: min(420px, 90%);
+    gap: clamp(10px, 2.5vh, 24px);
+  }
+
+  .setting {
+    grid-template-columns:
+      clamp(60px, 12vw, 100px)
+      1fr
+      clamp(35px, 7vw, 55px);
+    gap: clamp(6px, 1.5vw, 16px);
+  }
+
+  .setting label {
+    font-size: clamp(13px, 3vh, 22px);
+  }
+
+  .setting span {
+    font-size: clamp(12px, 2.5vh, 18px);
+  }
+
+  .setting input[type="range"] {
+    height: clamp(5px, 1.5vh, 8px);
+  }
+
+  /* =========================
+     CONTROLS
+  ========================= */
+
+  .controls-screen .controls-grid {
+    grid-template-columns:
+      clamp(85px, 18vw, 130px)
+      clamp(120px, 28vw, 180px);
+    column-gap: clamp(10px, 2vw, 24px);
+    row-gap: clamp(8px, 2vh, 18px);
+  }
+
+  .controls-screen .controls-grid span {
+    font-size: clamp(12px, 2.8vh, 20px);
+  }
+
+  .controls-screen .key {
+    width: clamp(32px, 7vw, 48px);
+    height: clamp(30px, 6vh, 42px);
+    font-size: clamp(12px, 2.5vh, 18px);
+  }
+
+  .controls-screen .key-group {
+    gap: clamp(4px, 1vw, 8px);
+  }
+
+  .controls-screen .key-space {
+    width: clamp(80px, 18vw, 120px);
+  }
+
+  /* =========================
+     IMPRESSUM
+  ========================= */
+
+  .impressum-content {
+    width: min(560px, 90%);
+    max-width: 90%;
+    max-height: 55vh;
+    padding: 5px 12px;
+    font-size: clamp(10px, 2.2vh, 14px);
+    line-height: 1.3;
+    box-sizing: border-box;
+  }
+
+  .impressum-content h3 {
+    margin: 6px 0 3px;
+    font-size: clamp(13px, 2.8vh, 18px);
+  }
+
+  .impressum-content p {
+    margin: 3px 0 7px;
+  }
+
+  /* =========================
+     BACK BUTTONS
+  ========================= */
+
+  .settings-screen .game-over-button,
+  .controls-screen .game-over-button,
+  .impressum-screen .game-over-button {
+    padding: clamp(6px, 1.5vh, 14px) clamp(16px, 4vw, 42px);
+    font-size: clamp(14px, 3vh, 28px);
+  }
+}
+
+/* =========================
+   VERY SMALL MOBILE SCREENS
+========================= */
+
+@media (max-width: 600px) and (orientation: landscape) {
+  .settings-screen,
+  .controls-screen,
+  .impressum-screen {
+    gap: 8px;
+    padding: 8px;
+  }
+
+  .settings-screen h2,
+  .controls-screen h2,
+  .impressum-screen h2 {
+    font-size: clamp(22px, 6vh, 34px);
+  }
+
+  /* SETTINGS */
+
+  .settings-content {
+    width: 92%;
+    gap: 10px;
+  }
+
+  .setting {
+    grid-template-columns: 55px 1fr 35px;
+    gap: 6px;
+  }
+
+  .setting label {
+    font-size: clamp(11px, 2.8vh, 15px);
+  }
+
+  .setting span {
+    font-size: clamp(10px, 2.5vh, 14px);
+  }
+
+  /* CONTROLS */
+
+  .controls-screen .controls-grid {
+    grid-template-columns: 75px 120px;
+    column-gap: 10px;
+    row-gap: 6px;
+  }
+
+  .controls-screen .controls-grid span {
+    font-size: clamp(10px, 2.5vh, 14px);
+  }
+
+  .controls-screen .key {
+    width: 30px;
+    height: 28px;
+    font-size: 12px;
+    border-width: 1px;
+    box-shadow:
+      0 2px 0 #666,
+      0 3px 6px rgba(0, 0, 0, 0.35);
+  }
+
+  .controls-screen .key-group {
+    gap: 4px;
+  }
+
+  .controls-screen .key-space {
+    width: 75px;
+  }
+
+  /* IMPRESSUM */
+
+  .impressum-content {
+    width: 94%;
+    max-width: 94%;
+    max-height: 52vh;
+    padding: 3px 8px;
+    font-size: 10px;
+    line-height: 1.2;
+  }
+
+  .impressum-content h3 {
+    margin: 4px 0 2px;
+    font-size: 13px;
+  }
+
+  .impressum-content p {
+    margin: 2px 0 5px;
+  }
+
+  /* BACK BUTTONS */
+
+  .settings-screen .game-over-button,
+  .controls-screen .game-over-button,
+  .impressum-screen .game-over-button {
+    padding: 6px 18px;
+    font-size: 14px;
+  }
+}
+
+/* =========================
+   EXTRA SMALL PHONE
+========================= */
+
+@media (max-width: 480px) and (orientation: landscape) {
+  .settings-screen,
+  .controls-screen,
+  .impressum-screen {
+    gap: 5px;
+    padding: 5px;
+  }
+
+  .settings-screen h2,
+  .controls-screen h2,
+  .impressum-screen h2 {
+    font-size: 24px;
+  }
+
+  .settings-content {
+    gap: 7px;
+  }
+
+  .setting {
+    grid-template-columns: 48px 1fr 30px;
+    gap: 5px;
+  }
+
+  .setting label {
+    font-size: 11px;
+  }
+
+  .setting span {
+    font-size: 10px;
+  }
+
+  .controls-screen .controls-grid {
+    grid-template-columns: 65px 105px;
+    column-gap: 6px;
+    row-gap: 4px;
+  }
+
+  .controls-screen .controls-grid span {
+    font-size: 10px;
+  }
+
+  .controls-screen .key {
+    width: 26px;
+    height: 24px;
+    font-size: 10px;
+  }
+
+  .controls-screen .key-space {
+    width: 65px;
+  }
+
+  .impressum-content {
+    max-height: 50vh;
+    font-size: 9px;
+    line-height: 1.15;
+  }
+
+  .impressum-content h3 {
+    font-size: 11px;
+  }
+
+  .settings-screen .game-over-button,
+  .controls-screen .game-over-button,
+  .impressum-screen .game-over-button {
+    padding: 5px 14px;
+    font-size: 12px;
+  }
 }

@@ -1,3 +1,8 @@
+/**
+ * Displays the current health of the endboss.
+ *
+ * @extends DrawableObject
+ */
 class EndbossBar extends DrawableObject {
   x = 500;
   y = 10;
@@ -7,6 +12,11 @@ class EndbossBar extends DrawableObject {
   maxEnergy = 400;
   currentEnergy = 400;
 
+  /**
+   * Images used for the different endboss energy levels.
+   *
+   * @type {string[]}
+   */
   IMAGES = [
     "img/7_statusbars/2_statusbar_endboss/orange/orange0.png",
     "img/7_statusbars/2_statusbar_endboss/orange/orange20.png",
@@ -16,22 +26,34 @@ class EndbossBar extends DrawableObject {
     "img/7_statusbars/2_statusbar_endboss/orange/orange100.png",
   ];
 
+  /**
+   * Creates a new EndbossBar.
+   */
   constructor() {
     super();
-
     this.loadImages(this.IMAGES);
     this.setEnergy(this.maxEnergy);
   }
 
+  /**
+   * Sets the current endboss energy and updates the displayed image.
+   *
+   * @param {number} energy - The current endboss energy.
+   */
   setEnergy(energy) {
     this.currentEnergy = Math.max(0, Math.min(energy, this.maxEnergy));
 
-    let path = this.IMAGES[this.resolveImageIndex()];
+    const path = this.IMAGES[this.resolveImageIndex()];
     this.img = this.imageCache[path];
   }
 
+  /**
+   * Determines the image index based on the current energy percentage.
+   *
+   * @returns {number} The index of the corresponding energy image.
+   */
   resolveImageIndex() {
-    let percentage = (this.currentEnergy / this.maxEnergy) * 100;
+    const percentage = (this.currentEnergy / this.maxEnergy) * 100;
 
     if (percentage >= 100) {
       return 5;
@@ -56,6 +78,11 @@ class EndbossBar extends DrawableObject {
     return 0;
   }
 
+  /**
+   * Draws the endboss health bar on the canvas.
+   *
+   * @param {CanvasRenderingContext2D} ctx - The canvas rendering context.
+   */
   draw(ctx) {
     ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
   }

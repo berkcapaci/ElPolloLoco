@@ -21,6 +21,11 @@ class SmallChicken extends MovableObject {
 
   IMAGE_DEAD = "img/3_enemies_chicken/chicken_small/2_dead/dead.png";
 
+  /**
+   * Creates a new small chicken at the given horizontal position.
+   *
+   * @param {number} x - The horizontal position of the small chicken.
+   */
   constructor(x) {
     super().loadImage(this.IMAGES_WALKING[0]);
     this.loadImages(this.IMAGES_WALKING);
@@ -31,6 +36,9 @@ class SmallChicken extends MovableObject {
     this.animate();
   }
 
+  /**
+   * Kills the small chicken and switches to its death image.
+   */
   hit() {
     this.energy = 0;
     this.isChickenDead = true;
@@ -43,6 +51,9 @@ class SmallChicken extends MovableObject {
     this.loadImage(this.IMAGE_DEAD);
   }
 
+  /**
+   * Starts the small chicken movement and walking animation.
+   */
   animate() {
     setInterval(() => {
       if (this.isFrozen || this.isChickenDead) {
@@ -61,6 +72,12 @@ class SmallChicken extends MovableObject {
     }, 200);
   }
 
+  /**
+   * Checks whether the small chicken is colliding with a thrown bottle.
+   *
+   * @param {ThrowableObject} bottle - The bottle to check against.
+   * @returns {boolean} True if the small chicken is colliding with the bottle.
+   */
   isCollidingWithBottle(bottle) {
     return (
       bottle.x + bottle.width > this.x + this.collisionOffsetX &&

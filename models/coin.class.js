@@ -1,26 +1,30 @@
-class Coin extends DrawableObject{
+class Coin extends DrawableObject {
+  width = 100;
+  height = 100;
 
-    width = 100; 
-    height = 100;
+  IMAGES_ROTATING_COIN = ["img/8_coin/coin_1.png", "img/8_coin/coin_2.png"];
 
-    IMAGES_ROTATING_COIN = [
-    "img/8_coin/coin_1.png",
-    "img/8_coin/coin_2.png"
-    ];
+  /**
+   * Creates a new coin at the given position.
+   *
+   * @param {number} x - The horizontal position of the coin.
+   * @param {number} y - The vertical position of the coin.
+   */
+  constructor(x, y) {
+    super();
+    this.loadImage(this.IMAGES_ROTATING_COIN[0]);
+    this.loadImages(this.IMAGES_ROTATING_COIN);
+    this.x = x;
+    this.y = y;
+    this.animate();
+  }
 
-    constructor(x, y){
-        super();
-        this.loadImage(this.IMAGES_ROTATING_COIN[0]);
-        this.loadImages(this.IMAGES_ROTATING_COIN);
-        this.x = x;
-        this.y = y;
-        this.animate();
-    }
-
-    animate(){
-        setInterval(() => {
-            this.playAnimation(this.IMAGES_ROTATING_COIN);
-        },300)
-    }
-
+  /**
+   * Starts the rotating coin animation.
+   */
+  animate() {
+    setInterval(() => {
+      this.playAnimation(this.IMAGES_ROTATING_COIN);
+    }, 300);
+  }
 }

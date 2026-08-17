@@ -23,6 +23,11 @@ class Chicken extends MovableObject {
 
   IMAGE_DEAD = "img/3_enemies_chicken/chicken_normal/2_dead/dead.png";
 
+  /**
+   * Creates a new chicken at the given horizontal position.
+   *
+   * @param {number} x - The horizontal position of the chicken.
+   */
   constructor(x) {
     super().loadImage("img/3_enemies_chicken/chicken_normal/1_walk/1_w.png");
     this.loadImages(this.IMAGES_WALKING);
@@ -33,6 +38,9 @@ class Chicken extends MovableObject {
     this.animate();
   }
 
+  /**
+   * Kills the chicken and switches to its death image.
+   */
   hit() {
     this.energy = 0;
     this.isChickenDead = true;
@@ -43,6 +51,9 @@ class Chicken extends MovableObject {
     this.loadImage(this.IMAGE_DEAD);
   }
 
+  /**
+   * Starts the chicken movement and walking animation.
+   */
   animate() {
     setInterval(() => {
       if (this.isFrozen || this.isChickenDead) {
@@ -50,6 +61,7 @@ class Chicken extends MovableObject {
       }
       this.moveLeft();
     }, 1000 / 60);
+
     setInterval(() => {
       if (this.isFrozen || this.isChickenDead) {
         return;
@@ -58,6 +70,12 @@ class Chicken extends MovableObject {
     }, 200);
   }
 
+  /**
+   * Checks whether the character is within the chicken's attack range.
+   *
+   * @param {Character} character - The character to check against.
+   * @returns {boolean} True if the character is inside the attack range.
+   */
   isCharacterInAttackRange(character) {
     const attackLeft = this.x + this.attackOffsetX;
     const attackRight = attackLeft + this.attackWidth;
@@ -77,6 +95,12 @@ class Chicken extends MovableObject {
     );
   }
 
+  /**
+   * Checks whether the chicken is colliding with a thrown bottle.
+   *
+   * @param {ThrowableObject} bottle - The bottle to check against.
+   * @returns {boolean} True if the chicken is colliding with the bottle.
+   */
   isCollidingWithBottle(bottle) {
     return (
       bottle.x + bottle.width > this.x + this.collisionOffsetX &&

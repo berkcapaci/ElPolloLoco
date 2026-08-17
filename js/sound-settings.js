@@ -1,3 +1,6 @@
+/**
+ * Initializes the music and effects volume controls.
+ */
 function setupVolumeControls() {
   const musicSlider = document.getElementById("music-volume");
   const effectsSlider = document.getElementById("effects-volume");
@@ -11,6 +14,14 @@ function setupVolumeControls() {
   setupEffectsSlider(effectsSlider, effectsValue);
 }
 
+/**
+ * Loads the saved music and effects volume values from local storage.
+ *
+ * @param {HTMLInputElement} musicSlider - The music volume slider.
+ * @param {HTMLInputElement} effectsSlider - The effects volume slider.
+ * @param {HTMLElement} musicValue - The displayed music volume value.
+ * @param {HTMLElement} effectsValue - The displayed effects volume value.
+ */
 function loadSavedVolumes(
   musicSlider,
   effectsSlider,
@@ -29,6 +40,12 @@ function loadSavedVolumes(
   }
 }
 
+/**
+ * Sets up the music volume slider and updates the music volume when changed.
+ *
+ * @param {HTMLInputElement} slider - The music volume slider.
+ * @param {HTMLElement} valueDisplay - The displayed volume value.
+ */
 function setupMusicSlider(slider, valueDisplay) {
   slider.addEventListener("input", () => {
     const volume = Number(slider.value);
@@ -37,6 +54,12 @@ function setupMusicSlider(slider, valueDisplay) {
   });
 }
 
+/**
+ * Sets up the effects volume slider and updates the effects volume when changed.
+ *
+ * @param {HTMLInputElement} slider - The effects volume slider.
+ * @param {HTMLElement} valueDisplay - The displayed volume value.
+ */
 function setupEffectsSlider(slider, valueDisplay) {
   slider.addEventListener("input", () => {
     const volume = Number(slider.value);
@@ -45,6 +68,9 @@ function setupEffectsSlider(slider, valueDisplay) {
   });
 }
 
+/**
+ * Initializes the mute button using the saved mute state.
+ */
 function setupMuteButton() {
   const muteButton = document.getElementById("mute-button");
   if (!muteButton) {
@@ -55,10 +81,19 @@ function setupMuteButton() {
   updateMuteButton(muteButton, isMuted);
 }
 
+/**
+ * Updates the mute button icon according to the current mute state.
+ *
+ * @param {HTMLElement} button - The mute button.
+ * @param {boolean} isMuted - Whether the sound is currently muted.
+ */
 function updateMuteButton(button, isMuted) {
   button.textContent = isMuted ? "🔇" : "🔊";
 }
 
+/**
+ * Toggles the mute state and updates the mute button.
+ */
 function toggleMute() {
   const isMuted = soundManager.toggleMute();
   const muteButton = document.getElementById("mute-button");

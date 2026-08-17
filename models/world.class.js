@@ -1,30 +1,53 @@
+/**
+ * Controls the game world, including the character, enemies, collisions, camera, rendering, game states and game loop.
+ */
 class World {
+  /** @type {Character} */
   character;
+  /** @type {Level} */
   level;
+  /** @type {MovableObject[]} */
   enemies;
-  clouds;
-  backgroundObjects;
+  /** @type {HTMLCanvasElement} */
   canvas;
+  /** @type {CanvasRenderingContext2D} */
   ctx;
+  /** @type {Keyboard} */
   keyboard;
+  /** @type {number} */
   camera_x = 0;
+  /** @type {StatusBar} */
   statusBar;
+  /** @type {ThrowableObject[]} */
   throwableObjects;
+  /** @type {CoinCounter} */
   coinCounter;
+  /** @type {BottleCounter} */
   bottleCounter;
+  /** @type {EndbossBar} */
   endbossBar;
+  /** @type {boolean} */
   canThrowBottle = true;
-  isChickenDead = false;
+  /** @type {boolean} */
   gameWon = false;
+  /** @type {boolean} */
   gameLost = false;
+  /** @type {number|undefined} */
   gameInterval;
+  /** @type {number|undefined} */
   animationFrameId;
+  /** @type {number|undefined} */
   throwCooldownTimeout;
+  /** @type {number|undefined} */
   loseScreenTimeout;
+  /** @type {number|undefined} */
   winScreenTimeout;
+  /** @type {boolean} */
   isStopped = false;
+  /** @type {SoundManager} */
   soundManager;
 
+  /** Creates a new game world. */
   constructor(canvas, keyboard, soundManager) {
     this.canvas = canvas;
     this.ctx = canvas.getContext("2d");
@@ -32,8 +55,6 @@ class World {
     this.level = createLevel1();
     this.character = new Character();
     this.enemies = this.level.enemies;
-    this.clouds = this.level.clouds;
-    this.backgroundObjects = this.level.backgroundObjects;
     this.statusBar = new StatusBar();
     this.throwableObjects = [];
     this.coinCounter = new CoinCounter();
@@ -45,6 +66,7 @@ class World {
     this.run();
   }
 
+  /** Connects the character and enemies to the current world. */
   setWorld() {
     this.character.world = this;
     this.level.enemies.forEach((enemy) => {
@@ -52,6 +74,7 @@ class World {
     });
   }
 
+  /** Starts the main game loop. */
   run() {
     this.gameInterval = setInterval(() => {
       if (this.isStopped) {
@@ -69,6 +92,7 @@ class World {
     }, 1000 / 60);
   }
 
+  /** Stops the game loop, animation frame and active timers. */
   stop() {
     this.isStopped = true;
     clearInterval(this.gameInterval);
@@ -76,23 +100,22 @@ class World {
     clearTimeout(this.throwCooldownTimeout);
     clearTimeout(this.loseScreenTimeout);
     clearTimeout(this.winScreenTimeout);
-
     this.level.enemies.forEach((enemy) => {
       enemy.isFrozen = true;
     });
   }
 
+  /** Resumes the game and restarts the game loop. */
   resume() {
     this.isStopped = false;
-
     this.level.enemies.forEach((enemy) => {
       enemy.isFrozen = false;
     });
-
     this.draw();
     this.run();
   }
 
+  /** Checks collisions between the character and enemies. */
   checkCollisions() {
     this.level.enemies.forEach((enemy) => {
       if (enemy.isChickenDead || enemy.isEndbossDead) {
@@ -114,6 +137,7 @@ class World {
     });
   }
 
+  /** Checks whether the character collects a coin. */
   checkCoinCollisions() {
     const availableCoins = this.level.coins;
     const collectedCoinIndex = availableCoins.findIndex((coin) => {
@@ -126,9 +150,10 @@ class World {
     }
   }
 
+  /** Checks whether the character collects a bottle. */
   checkBottleCollection() {
-    let availableBottles = this.level.bottles;
-    let collectedBottleIndex = availableBottles.findIndex((currentBottle) => {
+    const availableBottles = this.level.bottles;
+    const collectedBottleIndex = availableBottles.findIndex((currentBottle) => {
       return this.character.isColliding(currentBottle);
     });
     if (collectedBottleIndex !== -1) {
@@ -138,6 +163,7 @@ class World {
     }
   }
 
+  /** Checks collisions between thrown bottles and enemies. */
   checkBottleCollision() {
     this.throwableObjects.forEach((bottle) => {
       if (bottle.isBroken) {
@@ -163,6 +189,7 @@ class World {
     });
   }
 
+  /** Creates and throws a bottle when the player presses D. */
   checkThrowObjects() {
     if (this.character.isFrozen) {
       return;
@@ -172,7 +199,7 @@ class World {
       this.character.collectedBottles > 0 &&
       this.canThrowBottle
     ) {
-      let bottle = new ThrowableObject(
+      const bottle = new ThrowableObject(
         this.character.x + 50,
         this.character.y + 70,
       );
@@ -182,16 +209,20 @@ class World {
       this.character.collectedBottles--;
       this.bottleCounter.currentBottleAmount = this.character.collectedBottles;
       this.canThrowBottle = false;
-      setTimeout(() => {
+      this.throwCooldownTimeout = setTimeout(() => {
         this.canThrowBottle = true;
       }, 600);
     }
   }
 
+  /** Returns the endboss from the current level. */
+  getEndboss() {
+    return this.level.enemies.find((enemy) => enemy instanceof Endboss);
+  }
+
+  /** Checks whether the endboss is visible on the screen. */
   isEndbossVisible() {
-    const endboss = this.level.enemies.find(
-      (enemy) => enemy instanceof Endboss,
-    );
+    const endboss = this.getEndboss();
     if (!endboss) {
       return false;
     }
@@ -199,18 +230,16 @@ class World {
     return screenX < this.canvas.width && screenX + endboss.width > 0;
   }
 
+  /** Checks whether the endboss blocks the character's movement. */
   isEndbossBlocking() {
-    const endboss = this.level.enemies.find(
-      (enemy) => enemy instanceof Endboss,
-    );
-
+    const endboss = this.getEndboss();
     if (!endboss) {
       return false;
     }
-
     return this.character.x + this.character.width >= endboss.x - 20;
   }
 
+  /** Draws the complete game world and HUD. */
   draw() {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     this.ctx.translate(this.camera_x, 0);
@@ -220,18 +249,14 @@ class World {
     this.addObjectToMap(this.throwableObjects);
     this.addObjectToMap(this.level.coins);
     this.addObjectToMap(this.level.bottles);
-    // This allows Pepe to walk past the bottle.
     this.addToMap(this.character);
     this.ctx.translate(-this.camera_x, 0);
-    // HUD elements (Heads-up display) are drawn last so they always appear in front of the game world.
     this.addToMap(this.statusBar);
     this.addToMap(this.coinCounter);
     this.addToMap(this.bottleCounter);
     if (this.isEndbossVisible()) {
       this.endbossBar.draw(this.ctx);
     }
-    // Draw() wird immer wieder aufgerufen.
-    let self = this;
     this.animationFrameId = requestAnimationFrame(() => {
       if (!this.isStopped) {
         this.draw();
@@ -239,42 +264,45 @@ class World {
     });
   }
 
+  /** Adds multiple game objects to the map. */
   addObjectToMap(objects) {
     objects.forEach((o) => {
       this.addToMap(o);
     });
   }
 
+  /** Adds a single game object to the map. */
   addToMap(mo) {
     if (mo.otherDirection) {
       this.flipImage(mo);
     }
-
     mo.draw(this.ctx);
     mo.drawFrame(this.ctx);
-
     if (mo.otherDirection) {
       this.flipImageBack(mo);
     }
   }
 
+  /** Flips an object horizontally. */
   flipImage(mo) {
     this.ctx.save();
-
     this.ctx.translate(2 * mo.x + mo.width, 0);
     this.ctx.scale(-1, 1);
   }
 
+  /** Restores the canvas after flipping an object. */
   flipImageBack(mo) {
     this.ctx.restore();
   }
 
+  /** Removes throwable objects that are marked for deletion. */
   removeMarkedThrowableObjects() {
     this.throwableObjects = this.throwableObjects.filter(
       (throwableObject) => !throwableObject.markedForDeletion,
     );
   }
 
+  /** Removes dead chickens after their death animation duration. */
   removeDeadChickens() {
     const currentTime = new Date().getTime();
     this.level.enemies = this.level.enemies.filter((enemy) => {
@@ -285,6 +313,7 @@ class World {
     });
   }
 
+  /** Displays the win screen. */
   showWinScreen() {
     const winScreen = document.querySelector(".win-screen");
     if (!winScreen) {
@@ -293,53 +322,73 @@ class World {
     winScreen.classList.remove("d-none");
   }
 
+  /** Checks whether the player has defeated the endboss. */
   checkWinCondition() {
-    const endboss = this.level.enemies.find(
-      (enemy) => enemy instanceof Endboss,
-    );
-
+    const endboss = this.getEndboss();
     if (!endboss || this.gameWon) {
       return;
     }
-
     if (endboss.isEndbossDead && endboss.deathAnimationFinished) {
-      this.gameWon = true;
-      this.character.isFrozen = true;
-
-      this.winScreenTimeout = setTimeout(() => {
-        if (!this.isStopped) {
-          this.showWinScreen();
-        }
-      }, 1000);
+      this.handleGameWin();
     }
   }
 
+  /** Handles the game win state. */
+  handleGameWin() {
+    this.gameWon = true;
+    this.character.isFrozen = true;
+    this.playWinSoundAfterBossDeath();
+    this.scheduleWinScreen();
+  }
+
+  /** Plays the win sound after the endboss death sound has finished. */
+  playWinSoundAfterBossDeath() {
+    const bossDeathSound = this.soundManager.sounds.bossDeath;
+    if (bossDeathSound.ended) {
+      this.soundManager.play("win");
+      return;
+    }
+    bossDeathSound.addEventListener(
+      "ended",
+      () => {
+        if (!this.isStopped) {
+          this.soundManager.play("win");
+        }
+      },
+      { once: true },
+    );
+  }
+
+  /** Displays the win screen after a short delay. */
+  scheduleWinScreen() {
+    this.winScreenTimeout = setTimeout(() => {
+      if (!this.isStopped) {
+        this.showWinScreen();
+      }
+    }, 1000);
+  }
+
+  /** Displays the lose screen. */
   showLoseScreen() {
     const loseScreen = document.getElementById("lose-screen");
-
     if (!loseScreen) {
       return;
     }
-
     loseScreen.classList.remove("d-none");
   }
 
+  /** Checks whether the character has died. */
   checkLoseCondition() {
     if (this.gameLost) {
       return;
     }
-
     if (this.character.isDead()) {
       this.gameLost = true;
-
-      const endboss = this.level.enemies.find(
-        (enemy) => enemy instanceof Endboss,
-      );
-
+      this.soundManager.play("lose");
+      const endboss = this.getEndboss();
       if (endboss) {
         endboss.isFrozen = true;
       }
-
       this.loseScreenTimeout = setTimeout(() => {
         if (!this.isStopped) {
           this.showLoseScreen();

@@ -1,16 +1,15 @@
 /**
  * Creates coins arranged in a half-circle.
  *
- * @param {number} startX
- * @param {number} groundY
- * @param {number} width
- * @param {number} height
- * @param {number} itemAmount
- * @returns {Coin[]}
+ * @param {number} startX - Starting X position.
+ * @param {number} groundY - Ground Y position.
+ * @param {number} width - Width of the arc.
+ * @param {number} height - Height of the arc.
+ * @param {number} itemAmount - Number of coins.
+ * @returns {Coin[]} Array of coins.
  */
 function createCoinArc(startX, groundY, width, height, itemAmount) {
   let coins = [];
-
   for (let i = 0; i < itemAmount; i++) {
     let x = startX + (width / (itemAmount - 1)) * i;
     let angle = (Math.PI * i) / (itemAmount - 1);
@@ -20,6 +19,15 @@ function createCoinArc(startX, groundY, width, height, itemAmount) {
   return coins;
 }
 
+/**
+ * Creates bottles in a horizontal line.
+ *
+ * @param {number} startX - Starting X position.
+ * @param {number} y - Y position.
+ * @param {number} itemAmount - Number of bottles.
+ * @param {number} distance - Distance between bottles.
+ * @returns {Bottle[]} Array of bottles.
+ */
 function createBottleLine(startX, y, itemAmount, distance) {
   let bottles = [];
   for (let i = 0; i < itemAmount; i++) {
@@ -29,6 +37,14 @@ function createBottleLine(startX, y, itemAmount, distance) {
   return bottles;
 }
 
+/**
+ * Creates chickens at random positions.
+ *
+ * @param {number} itemAmount - Number of chickens.
+ * @param {number} minX - Minimum X position.
+ * @param {number} maxX - Maximum X position.
+ * @returns {Chicken[]} Array of chickens.
+ */
 function createRandomChickens(itemAmount, minX, maxX) {
   let chickens = [];
   for (let i = 0; i < itemAmount; i++) {
@@ -38,10 +54,20 @@ function createRandomChickens(itemAmount, minX, maxX) {
   return chickens;
 }
 
+/**
+ * Creates all enemies for level 1.
+ *
+ * @returns {(Chicken|Endboss)[]} Array of enemies.
+ */
 function createEnemies() {
   return [...createRandomChickens(20, 300, 4000), new Endboss()];
 }
 
+/**
+ * Creates all clouds for level 1.
+ *
+ * @returns {Cloud[]} Array of clouds.
+ */
 function createClouds() {
   return [
     new Cloud(0),
@@ -54,23 +80,25 @@ function createClouds() {
   ];
 }
 
+/**
+ * Creates all background objects for level 1.
+ *
+ * @returns {BackgroundObject[]} Array of background objects.
+ */
 function createBackgroundObjects() {
   return [
     new BackgroundObject("img/5_background/layers/air.png", -719),
     new BackgroundObject("img/5_background/layers/3_third_layer/2.png", -719),
     new BackgroundObject("img/5_background/layers/2_second_layer/2.png", -719),
     new BackgroundObject("img/5_background/layers/1_first_layer/2.png", -719),
-
     new BackgroundObject("img/5_background/layers/air.png", 0),
     new BackgroundObject("img/5_background/layers/3_third_layer/1.png", 0),
     new BackgroundObject("img/5_background/layers/2_second_layer/1.png", 0),
     new BackgroundObject("img/5_background/layers/1_first_layer/1.png", 0),
-
     new BackgroundObject("img/5_background/layers/air.png", 719),
     new BackgroundObject("img/5_background/layers/3_third_layer/2.png", 719),
     new BackgroundObject("img/5_background/layers/2_second_layer/2.png", 719),
     new BackgroundObject("img/5_background/layers/1_first_layer/2.png", 719),
-
     new BackgroundObject("img/5_background/layers/air.png", 719 * 2),
     new BackgroundObject(
       "img/5_background/layers/3_third_layer/1.png",
@@ -84,7 +112,6 @@ function createBackgroundObjects() {
       "img/5_background/layers/1_first_layer/1.png",
       719 * 2,
     ),
-
     new BackgroundObject("img/5_background/layers/air.png", 719 * 3),
     new BackgroundObject(
       "img/5_background/layers/3_third_layer/2.png",
@@ -98,7 +125,6 @@ function createBackgroundObjects() {
       "img/5_background/layers/1_first_layer/2.png",
       719 * 3,
     ),
-
     new BackgroundObject("img/5_background/layers/air.png", 719 * 4),
     new BackgroundObject(
       "img/5_background/layers/3_third_layer/1.png",
@@ -112,7 +138,6 @@ function createBackgroundObjects() {
       "img/5_background/layers/1_first_layer/1.png",
       719 * 4,
     ),
-
     new BackgroundObject("img/5_background/layers/air.png", 719 * 5),
     new BackgroundObject(
       "img/5_background/layers/3_third_layer/2.png",
@@ -126,7 +151,6 @@ function createBackgroundObjects() {
       "img/5_background/layers/1_first_layer/2.png",
       719 * 5,
     ),
-
     new BackgroundObject("img/5_background/layers/air.png", 719 * 6),
     new BackgroundObject(
       "img/5_background/layers/3_third_layer/1.png",
@@ -140,7 +164,6 @@ function createBackgroundObjects() {
       "img/5_background/layers/1_first_layer/1.png",
       719 * 6,
     ),
-
     new BackgroundObject("img/5_background/layers/air.png", 719 * 7),
     new BackgroundObject(
       "img/5_background/layers/3_third_layer/2.png",
@@ -154,17 +177,20 @@ function createBackgroundObjects() {
       "img/5_background/layers/1_first_layer/2.png",
       719 * 7,
     ),
-
     new BackgroundObject("img/5_background/layers/air.png", 719 * 8),
   ];
 }
 
+/**
+ * Creates all coins for level 1.
+ *
+ * @returns {Coin[]} Array of coins.
+ */
 function createLevelCoins() {
   return [
     ...createCoinArc(400, 200, 350, 100, 12),
     ...createCoinArc(1800, 200, 350, 100, 12),
     ...createCoinArc(3200, 200, 350, 100, 12),
-
     new Coin(4050, 300),
     new Coin(4100, 300),
     new Coin(4150, 300),
@@ -177,6 +203,11 @@ function createLevelCoins() {
   ];
 }
 
+/**
+ * Creates all bottles for level 1.
+ *
+ * @returns {Bottle[]} Array of bottles.
+ */
 function createLevelBottles() {
   return [
     ...createBottleLine(400, 360, 9, 50),
@@ -186,6 +217,12 @@ function createLevelBottles() {
   ];
 }
 
+/**
+ * Creates level 1 with all enemies, clouds,
+ * background objects, coins and bottles.
+ *
+ * @returns {Level} The configured level.
+ */
 function createLevel1() {
   return new Level(
     createEnemies(),
