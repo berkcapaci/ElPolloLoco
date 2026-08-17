@@ -1,363 +1,313 @@
-El Pollo Loco
+<div align="center">
 
-A browser-based 2D jump-and-run game developed with HTML, CSS and JavaScript.
+# El Pollo Loco
 
-Play as Pepe, collect coins and bottles, defeat enemies and finally defeat the Endboss.
+**A browser-based 2D jump-and-run game built with vanilla HTML, CSS and JavaScript**
 
-Live Demo
+![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=flat-square&logo=html5&logoColor=white)
+![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=flat-square&logo=css3&logoColor=white)
+![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=flat-square&logo=javascript&logoColor=black)
+![No Framework](https://img.shields.io/badge/Framework-None-lightgrey?style=flat-square)
 
-Play El Pollo Loco
+[Live Demo](https://berkcapaci.developerakademie.net/ElPolloLoco/index.html) · [Features](#features) · [Controls](#controls) · [Architecture](#architecture)
 
-About
+</div>
 
-El Pollo Loco is a 2D side-scrolling platform game created as a JavaScript and Object-Oriented Programming learning project.
+---
 
-The game combines player movement, animations, gravity, collision detection, collectibles, throwable bottles, enemy AI, an Endboss fight, sound management, a Shop system, pause functionality and mobile controls.
+## Live Demo
 
-The project focuses on:
+Play the game directly in your browser: **[berkcapaci.developerakademie.net/ElPolloLoco](https://berkcapaci.developerakademie.net/ElPolloLoco/index.html)**
 
-Object-Oriented Programming
-Classes and inheritance
-Separation of responsibilities
-Reusable game logic
-Canvas rendering
-Collision systems
-DOM interaction
-Responsive design
-Features
-Start screen and main menu
-Playable Pepe character
-Walking, jumping and gravity
-Idle and long-idle animations
-Pepe snoring
-Hurt and death states
-Character health system
-Collision detection with collision offsets
-Chicken enemies
-Small Chickens spawned by the Endboss
-Chicken jumping attack
-Bottle attacks
-Coin collection
-Bottle collection
-Coin counter
-Bottle counter
-Bottle inventory
-Bottle throwing cooldown
-Bottle rotation and splash animations
-Endboss health system
-Endboss health bar
-Endboss walking state
-Endboss alert state
-Endboss attack state
-Endboss hurt state
-Endboss death state
-Endboss movement and speed control
-Endboss attack collision
-Endboss collision offset
-Endboss movement blocking
-Endboss Small Chicken spawning
-Win and lose states
-Win and lose screens
-Restart without page reload
-Pause system
-Shop system
-Bottle purchases
-Sound effects
-Background music
-Music and effects volume settings
-Global mute
-Persistent sound settings with localStorage
-Fullscreen mode
-Mobile controls
-Mobile landscape orientation
-Responsive layout
-Controls screen
-Sound settings screen
-Impressum screen
-Controls
-Desktop
-Action	Control
-Move left	Arrow Left
-Move right	Arrow Right
-Jump	Space
-Throw bottle	D
-Open / close Shop	S
-Pause / resume	ESC
-Fullscreen	Fullscreen button
-Mute / unmute	Sound button
-Mobile
+---
 
-Mobile controls provide:
+## About
 
-Move left
-Move right
-Jump
-Throw bottle
-Shop
-Pause
+**El Pollo Loco** is a 2D side-scrolling platform game built as a JavaScript and Object-Oriented Programming learning project.
 
-The game is designed for landscape orientation on mobile devices.
+Play as **Pepe**, collect coins and bottles, defeat chicken enemies, and take down the **Endboss**.
 
-Game Objective
+The project combines player movement, animations, gravity, collision detection, collectibles, throwable bottles, enemy AI, a boss fight, sound management, a shop system, pause functionality, and mobile controls — all implemented without any external JavaScript framework.
+
+**Core focus areas:**
+
+| Area | Description |
+|---|---|
+| Object-Oriented Programming | Classes, inheritance, and clean separation of responsibilities |
+| Game Engine Basics | Canvas rendering, game loop, gravity, collision systems |
+| Reusability | Shared base classes for drawable and movable objects |
+| UI / UX | Responsive design, DOM interaction, mobile controls |
+
+---
+
+## Table of Contents
+
+1. [Features](#features)
+2. [Controls](#controls)
+3. [Game Objective](#game-objective)
+4. [Game Mechanics](#game-mechanics)
+5. [Game States](#game-states)
+6. [Architecture](#architecture)
+7. [Project Structure](#project-structure)
+8. [Technologies](#technologies)
+9. [Getting Started](#getting-started)
+10. [Credits](#credits)
+11. [License](#license)
+
+---
+
+## Features
+
+<table>
+<tr>
+<td valign="top" width="33%">
+
+**Gameplay**
+- Playable Pepe character
+- Walking, jumping and gravity
+- Idle and long-idle animations
+- Hurt and death states
+- Character health system
+- Collision detection with offsets
+
+</td>
+<td valign="top" width="33%">
+
+**Enemies & Combat**
+- Regular chicken enemies
+- Small chickens spawned by the Endboss
+- Chicken jumping attack
+- Bottle throwing with cooldown
+- Bottle rotation and splash animation
+
+</td>
+<td valign="top" width="33%">
+
+**Endboss**
+- Walk, alert, attack, hurt and dead states
+- Distance-based detection
+- Adjustable movement speed
+- Dedicated attack collision area
+- Health bar and small-chicken spawning
+
+</td>
+</tr>
+<tr>
+<td valign="top" width="33%">
+
+**Collectibles & Economy**
+- Coin collection and counter
+- Bottle collection and counter
+- In-game shop with purchases
+- Persistent sound settings via `localStorage`
+
+</td>
+<td valign="top" width="33%">
+
+**Audio**
+- Background music and sound effects
+- Independent music / effects volume
+- Global mute toggle
+
+</td>
+<td valign="top" width="33%">
+
+**Interface & Platform**
+- Start screen and main menu
+- Pause system
+- Win / lose screens with restart
+- Fullscreen mode
+- Mobile controls and landscape layout
+- Controls, sound settings and impressum screens
+
+</td>
+</tr>
+</table>
+
+---
+
+## Controls
+
+### Desktop
+
+| Action | Key |
+|---|---|
+| Move left | `Arrow Left` |
+| Move right | `Arrow Right` |
+| Jump | `Space` |
+| Throw bottle | `D` |
+| Open / close shop | `S` |
+| Pause / resume | `Esc` |
+| Fullscreen | Fullscreen button |
+| Mute / unmute | Sound button |
+
+### Mobile
+
+On-screen buttons provide **move left**, **move right**, **jump**, **throw bottle**, **shop**, and **pause**. The game is designed for landscape orientation on mobile devices.
+
+---
+
+## Game Objective
 
 The objective is to reach and defeat the Endboss.
 
-The gameplay flow is:
-
+```
 Start Menu
-    ↓
+    │
+    ▼
 Gameplay
-    ↓
+    │
+    ▼
 Collect Coins / Bottles
-    ↓
+    │
+    ▼
 Fight Chickens
-    ↓
-Reach Endboss
-    ↓
-Endboss Alert
-    ↓
-Endboss Attack
-    ↓
-Throw Bottles
-    ↓
-Endboss Hurt
-    ↓
-Endboss Defeated
-    ↓
+    │
+    ▼
+Reach Endboss ──► Alert ──► Attack ──► Throw Bottles ──► Hurt ──► Defeated
+    │
+    ▼
 Death Animation
-    ↓
+    │
+    ▼
 You Win
+```
 
-If Pepe loses all energy:
+If Pepe's energy reaches zero, a death animation plays and the **You Lost** screen is shown instead.
 
-Gameplay
-    ↓
-Pepe takes damage
-    ↓
-Energy reaches 0
-    ↓
-Pepe Death Animation
-    ↓
-You Lost
-Game Mechanics
-Pepe
+---
 
-The Character class controls the player.
+## Game Mechanics
 
-Pepe has:
+### Pepe (Character)
 
-Movement
-Jumping
-Gravity
-Direction handling
-Collision detection
-Collision offsets
-Health
-Hurt state
-Death state
-Idle animations
-Walking animation
-Jump animation
-Hurt animation
-Death animation
-Coin inventory
-Bottle inventory
+Controlled by `character.class.js`. Handles movement, jumping, gravity, direction, collision offsets, health, hurt/death states, and a full animation set (idle, walk, jump, hurt, death), along with the coin and bottle inventory.
 
-Collision offsets reduce the effective collision area of the sprite so that the complete image rectangle is not automatically treated as the physical body.
+### Chickens & Small Chickens
 
-Chicken
+Regular chickens roam the level and damage Pepe on contact; they can be defeated by jumping on them or hitting them with a bottle. Small chickens are additional enemies spawned by the Endboss during the fight and can be defeated with bottles as well.
 
-Regular Chicken enemies move through the level and can damage Pepe.
+### Endboss
 
-They can be defeated by:
+The Endboss runs through five states — `WALK`, `ALERT`, `ATTACK`, `HURT`, `DEAD`. It detects Pepe by distance, moves toward him, blocks his path, and only deals damage when its dedicated attack collision area overlaps Pepe. It has its own health bar, attack cooldown, and can spawn small chickens.
 
-Jumping on them
-Hitting them with a bottle
+### Collision System
 
-Chicken collision areas are separated from their visual sprite when necessary.
+Rectangular collision detection is used throughout, with adjustable offsets (`top`, `bottom`, `left`, `right`) so the visible sprite and the physical hitbox can differ. Separate collision checks exist for:
 
-Small Chicken
+- Character vs. Chicken
+- Character vs. Endboss
+- Character vs. Coin
+- Character vs. Bottle
+- Bottle vs. Chicken
+- Bottle vs. Small Chicken
+- Bottle vs. Endboss
 
-Small Chickens are additional enemies spawned by the Endboss during the boss fight.
+### Coins & Bottles
 
-They can also be defeated using throwable bottles.
+Coins and bottles are scattered through the level. Collecting a coin removes it from the level, increases Pepe's coin inventory, and updates the coin counter. Bottles work the same way and can be thrown once available — each throw checks the inventory and cooldown, spawns a `ThrowableObject`, applies gravity and rotation, checks for enemy collisions, and plays a splash animation on impact.
 
-Endboss
+### Shop
 
-The Endboss has several states:
+Accessible from the main menu or during gameplay. Opening it freezes the game and enemies, hides mobile controls, and displays the current coin balance.
 
-WALK
-ALERT
-ATTACK
-HURT
-DEAD
+| Item | Price |
+|---|---|
+| 1 Bottle | 3 Coins |
+| 5 Bottles | 10 Coins |
+| Coin Magnet | 15 Coins *(Coming Soon)* |
 
-The Endboss:
+### Sound System
 
-Detects Pepe based on distance
-Moves towards Pepe
-Has an adjustable movement speed
-Stops Pepe from moving through the boss
-Attacks only when Pepe is physically close enough
-Uses a dedicated attack collision area
-Has collision offsets
-Can receive bottle damage
-Can spawn Small Chickens
-Has an attack cooldown
-Has a health bar
-Has hurt and death animations
+`sound-manager.class.js` centralizes all audio — background music, jump, bottle throw/break, chicken death, Pepe hurt/death/snore, and the full set of Endboss and win/lose sounds. Music volume, effects volume, and global mute are controlled independently and persisted with `localStorage`.
 
-The Endboss does not damage Pepe from a large distance. Damage is applied when the attack collision condition is met.
+---
 
-Collision System
+## Game States
 
-The project uses rectangular collision detection.
+| State | Description |
+|---|---|
+| **Main Menu** | Access to Play, Shop, Sound Settings, Controls, and Impressum |
+| **Playing** | Normal gameplay |
+| **Paused** | Gameplay and enemy behavior stop; player can resume or return to menu |
+| **Shop** | Current game is temporarily frozen while the shop is open |
+| **Won** | Endboss reaches zero energy, death animation finishes, win sound and screen appear |
+| **Lost** | Pepe's energy reaches zero and the death sequence finishes |
 
-Collision areas can be adjusted using offsets:
+---
 
-top
-bottom
-left
-right
+## Architecture
 
-This allows the visible sprite and the actual gameplay collision area to be separated.
+### Object-Oriented Structure
 
-Different collision systems are used where necessary:
+```
+DrawableObject
+      │
+      ▼
+MovableObject
+      │
+      ├── Character
+      ├── Chicken
+      ├── SmallChicken
+      ├── Endboss
+      └── ThrowableObject
 
-Character vs Chicken
-Character vs Endboss
-Character vs Coin
-Character vs Bottle
-Bottle vs Chicken
-Bottle vs Small Chicken
-Bottle vs Endboss
+DrawableObject
+      ├── BackgroundObject
+      ├── Cloud
+      ├── Coin
+      ├── Bottle
+      ├── StatusBar
+      ├── CoinCounter
+      ├── BottleCounter
+      └── EndbossBar
+```
 
-This makes collisions more precise and avoids relying only on the full sprite dimensions.
+`World` is the central controller that ties the character, level, enemies, collectibles, camera, HUD, sound, and game loop together.
 
-Coin System
+### Key Classes
 
-Coins can be collected throughout the level.
-
-When Pepe collects a coin:
-
-The coin is removed from the level.
-Pepe's coin inventory increases.
-The Coin Counter is updated.
-
-Coins can also be used in the Shop.
-
-Bottle System
-
-Bottles can be collected throughout the level.
-
-Collected bottles are added to Pepe's inventory.
-
-A bottle can only be thrown when Pepe has at least one bottle available.
-
-When throwing a bottle:
-
-The game checks the bottle inventory.
-The throw cooldown is checked.
-A ThrowableObject is created.
-The bottle is spawned in front of Pepe.
-The bottle moves through the level.
-Gravity affects the bottle.
-The bottle rotates.
-Enemy collisions are checked.
-The bottle breaks when it hits an enemy.
-Damage is applied.
-The splash animation is displayed.
-The bottle is removed.
-
-A short cooldown prevents continuous bottle throwing.
-
-Shop
-
-The Shop can be opened from the main menu or during gameplay.
-
-During active gameplay:
-
-The game is frozen.
-Enemies are frozen.
-Mobile controls are hidden.
-The current coin balance is displayed.
-Bottles can be purchased.
-The game resumes after closing the Shop.
-Shop Items
-Item	Price
-1 Bottle	3 Coins
-5 Bottles	10 Coins
-Coin Magnet	15 Coins
-
-The Coin Magnet is currently displayed as a Coming Soon feature.
-
-Sound System
-
-The SoundManager handles the game's audio.
-
-It manages:
-
-Background music
-Jump sound
-Bottle throw sound
-Bottle break sound
-Chicken death sound
-Pepe hurt sound
-Pepe death sound
-Pepe snoring sound
-Endboss alert sound
-Endboss attack sound
-Endboss hurt sound
-Endboss death sound
-Win sound
-Lose sound
-
-The player can independently control:
-
-Music volume
-Effects volume
-Global mute
-
-Sound preferences are stored using localStorage.
-
-Game States
-Main Menu
-
-Provides access to:
-
-Play
-Shop
-Sound Settings
-Controls
-Impressum
-Playing
-
-Normal gameplay.
-
-Paused
-
-Gameplay and enemy behavior are stopped.
-
-The player can continue or return to the menu.
-
-Shop
-
-The current game is temporarily frozen while the Shop is open.
-
-Won
-
-The player wins after:
-
-The Endboss reaches zero energy.
-The Endboss death animation finishes.
-The game enters the win state.
-The win sound is played.
-The win screen is displayed.
-Lost
-
-The player loses after Pepe's energy reaches zero and the death sequence finishes.
-
-Project Structure
+| File | Responsibility |
+|---|---|
+| `drawable-object.class.js` | Base class: image loading, caching, rendering, animation frames |
+| `movable-object.class.js` | Base class: movement, gravity, speed, direction, collisions, energy |
+| `character.class.js` | Pepe's player-specific behavior |
+| `chicken.class.js` / `small-chicken.class.js` | Enemy behavior |
+| `endboss.class.js` | Endboss states, attacks, damage, death |
+| `throwable-object.class.js` | Bottle projectile behavior |
+| `coin.class.js` / `bottle.class.js` | Collectible items |
+| `cloud.class.js` / `background-object.class.js` | Level scenery |
+| `status-bar.class.js`, `coin-counter.class.js`, `bottle-counter.class.js`, `endboss-bar.class.js` | HUD elements |
+| `world.class.js` | Central game controller |
+| `level.class.js` | Level configuration (enemies, clouds, coins, bottles, boundaries) |
+| `keyboard.class.js` | Keyboard input state |
+| `sound-manager.class.js` | Audio management |
+
+### JavaScript Modules
+
+| File | Responsibility |
+|---|---|
+| `js/game.js` | Game startup, restart, and lifecycle |
+| `js/menu.js` | Menu navigation, screens, pause, fullscreen |
+| `js/mobile.js` | Mobile controls, touch input, orientation |
+| `js/shop.js` | Shop functionality and state interaction |
+| `js/sound-settings.js` | Connects the sound settings UI to `SoundManager` |
+
+### CSS Architecture
+
+| File | Responsibility |
+|---|---|
+| `css/style.css` | General page layout and base styling |
+| `css/game.css` | Game container and in-game styling |
+| `css/ui.css` | Menus, buttons, pause, and win/lose screens |
+| `css/shop.css` | Shop layout, items, and purchase interface |
+| `css/media.css` | Responsive and mobile-specific styling |
+
+---
+
+## Project Structure
+
+```
 ElPolloLoco/
 │
 ├── index.html
@@ -400,289 +350,49 @@ ElPolloLoco/
 │   ├── throwable-object.class.js
 │   └── world.class.js
 │
-├── assets/
-├── audio/
-└── img/
+├── assets/     # fonts and misc. UI images
+├── audio/      # sound effects and music
+└── img/        # sprites, backgrounds and screens
+```
 
-The asset folders contain the images, sounds and font files used by the game.
+---
 
-JavaScript Architecture
+## Technologies
 
-The project is structured using classes and modules.
+- HTML5 & the Canvas API
+- CSS3 with Media Queries (responsive design)
+- JavaScript (ES6 Classes, Inheritance, OOP)
+- DOM manipulation & Pointer Events
+- Fullscreen API
+- HTML5 Audio API
+- `localStorage`
 
-Base Classes
-drawable-object.class.js
+No external JavaScript framework is used.
 
-Base class for drawable objects.
+---
 
-Handles:
+## Getting Started
 
-Image loading
-Image caching
-Rendering
-Animation images
-movable-object.class.js
+The project should be run through a local development server rather than opened as a plain file.
 
-Base class for moving objects.
+```bash
+# clone the repository
+git clone https://github.com/berkcapaci/El-Pollo-Loco.git
 
-Handles:
+# open the project folder in your editor
+cd El-Pollo-Loco/ElPolloLoco
+```
 
-Movement
-Gravity
-Speed
-Direction
-Collision detection
-Collision offsets
-Energy
-Damage
-Hurt and death states
-Game Objects
-character.class.js
+Then open `index.html` through a local server — for example, the **Live Server** extension in Visual Studio Code.
 
-Controls Pepe and his player-specific behavior.
+Canvas resolution: **720 × 480**
 
-chicken.class.js
+---
 
-Controls regular Chicken enemies.
+## Credits
 
-small-chicken.class.js
+Game project developed by **Berk Capaci**, created as part of a JavaScript and Object-Oriented Programming learning journey. Intended as a learning and portfolio project.
 
-Controls Small Chickens spawned by the Endboss.
+## License
 
-endboss.class.js
-
-Controls Endboss movement, states, attacks, damage and death.
-
-throwable-object.class.js
-
-Controls bottles thrown by Pepe.
-
-coin.class.js
-
-Represents collectible coins.
-
-bottle.class.js
-
-Represents collectible bottles.
-
-cloud.class.js
-
-Represents clouds in the level.
-
-background-object.class.js
-
-Represents background elements.
-
-HUD
-status-bar.class.js
-
-Displays Pepe's health.
-
-coin-counter.class.js
-
-Displays the collected coin amount.
-
-bottle-counter.class.js
-
-Displays the collected bottle amount.
-
-endboss-bar.class.js
-
-Displays the Endboss health.
-
-Game Management
-world.class.js
-
-The central game controller.
-
-It connects and manages:
-
-Character
-Level
-Enemies
-Collision systems
-Coins
-Bottles
-Throwable objects
-Camera
-Rendering
-HUD
-Game loop
-Win and lose states
-Pause behavior
-Shop freezing
-Sound interaction
-level.class.js
-
-Stores the level configuration:
-
-Enemies
-Clouds
-Background objects
-Coins
-Bottles
-Level boundaries
-keyboard.class.js
-
-Stores keyboard input states.
-
-sound-manager.class.js
-
-Central audio manager for music and sound effects.
-
-JavaScript Modules
-js/game.js
-
-Controls game startup, restart and the main game lifecycle.
-
-js/menu.js
-
-Handles menu navigation, screens, pause, fullscreen and UI navigation.
-
-js/mobile.js
-
-Handles mobile controls, touch interaction and landscape orientation.
-
-js/shop.js
-
-Handles Shop functionality, purchases and Shop/game state interaction.
-
-js/sound-settings.js
-
-Connects the sound settings interface with the SoundManager.
-
-Level Design
-levels/level1.js
-
-Contains the complete Level 1 design.
-
-It defines:
-
-Background objects
-Clouds
-Chickens
-Small Chicken spawning support
-Coins
-Bottles
-Endboss
-Enemy placement
-Collectible placement
-Level length
-
-Helper functions are used to keep the level design readable and reusable.
-
-CSS Architecture
-css/style.css
-
-General page layout and base styling.
-
-css/game.css
-
-Game container and game-specific styling.
-
-css/ui.css
-
-Menus, buttons, settings, controls, pause and win/lose screens.
-
-css/shop.css
-
-Shop layout, items, prices and purchase interface.
-
-css/media.css
-
-Responsive and mobile-specific styling.
-
-HTML
-index.html
-
-The main entry point of the application.
-
-It contains the game's:
-
-Start screen
-Canvas
-Pause screen
-Win screen
-Lose screen
-Shop
-Sound settings
-Controls
-Impressum
-Mobile controls
-Orientation screen
-
-The canvas size is:
-
-720 × 480
-
-The HTML also defines the JavaScript loading order.
-
-Object-Oriented Structure
-
-The main inheritance structure is:
-
-DrawableObject
-        │
-        ▼
-MovableObject
-        │
-        ├── Character
-        ├── Chicken
-        ├── SmallChicken
-        ├── Endboss
-        └── ThrowableObject
-
-Other drawable objects include:
-
-DrawableObject
-├── BackgroundObject
-├── Cloud
-├── Coin
-├── Bottle
-├── StatusBar
-├── CoinCounter
-├── BottleCounter
-└── EndbossBar
-
-The World class coordinates these objects and their interactions.
-
-Technologies
-
-The project uses:
-
-HTML5
-CSS3
-JavaScript
-HTML Canvas API
-JavaScript Classes
-Object-Oriented Programming
-Inheritance
-DOM manipulation
-Pointer Events
-Fullscreen API
-HTML5 Audio API
-localStorage
-CSS Media Queries
-Responsive Web Design
-
-No external JavaScript framework is required.
-
-Development
-
-The project should be run using a local development server.
-
-For example, Visual Studio Code with the Live Server extension can be used.
-
-Open:
-
-index.html
-
-through the local server.
-
-Credits
-
-Game project developed by Berk Capaci.
-
-Created as part of a JavaScript and Object-Oriented Programming learning journey.
-
-The project is intended as a learning and portfolio project.
+No license file is currently included in this repository. Add a `LICENSE` file (for example MIT) if you want to define reuse terms for this project.
